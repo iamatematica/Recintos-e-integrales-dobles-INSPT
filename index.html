@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Recintos e integrales dobles · AM II Química</title>
+<!-- laboratoriobest-IA · Análisis Matemático II · Tecnicatura Superior en Química · INSPT-UTN
+     Recintos (revisión de AM I) · integrales dobles · volúmenes y áreas · resumen
+     Archivo único: HTML5 + CSS + JS vanilla + canvas 2D (sin librerías externas) -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* una columna de lectura de 1160 px; azul estructura, ámbar voz docente, verde acierto, rojo error */
+:root{
+  --navy:#0f2244; --blue:#1d6fcc; --bg:#eef4fb;
+  --g50:#f8fafc; --g100:#f1f5f9; --g200:#e2e8f0; --g300:#cbd5e1; --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b;
+  --ok:#059669; --ok-bg:#ecfdf5; --ok-bd:#a7f3d0;
+  --amb:#b45309; --amb-bg:#fffbeb; --amb-bd:#fcd34d;
+  --def:#1e40af; --def-bg:#eef4ff; --def-bd:#93c5fd;
+  --err:#be123c; --err-bg:#fff1f2; --err-bd:#fecdd3;
+  --int:#6d28d9; --int-bg:#f5f3ff; --int-bd:#c4b5fd;
+  --lab-terra:#b57d4c; --lab-blue:#415a8e; --lab-dark:#20201c; --lab-cream:#faf8f1; --lab-gray:#6579a1;
+  --ej:#1d6fcc; --cx:#15803d; --cy:#b45309;
+  --rl:16px; --sh:0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -1px rgba(0,0,0,.05);
+  --mathfont:'STIX Two Text','STIX Two Math','Cambria Math','Times New Roman',serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:'Outfit',system-ui,sans-serif;font-size:16px;background:var(--bg);color:var(--g800);line-height:1.6;min-height:100vh}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;line-height:1.25;color:var(--navy);text-wrap:balance}
+h1{font-size:clamp(1.6rem,3.5vw,2.2rem)} h2{font-size:clamp(1.25rem,2.6vw,1.6rem)} h3{font-size:1.15rem} h4{font-size:1rem}
+p{margin-bottom:.7em} strong{color:var(--navy)}
+ul,ol{margin:.3em 0 .8em 1.3em} li{margin:.25em 0}
+sup,sub{font-size:.72em;line-height:0}
+button{font-family:inherit}
+
+/* ---------- matemática ---------- */
+.mi,.md{font-family:var(--mathfont);font-style:normal}
+.mi{white-space:nowrap;font-size:1.06em}
+.mi i,.md i{font-style:italic}
+.op{font-style:normal}
+.tx{font-family:'Outfit',sans-serif;font-style:normal;font-size:.9em}
+.md{display:block;font-size:1.18em;margin:.55em 0;padding:.25em .4em;line-height:1.9;text-align:center;white-space:normal;overflow-x:auto;overflow-y:hidden}
+.md .fr,.md .par,.md .rt,.md .sis,.md .itg,.md .ev{white-space:nowrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;text-align:center;line-height:1.25}
+.fr>.fn{padding:0 .3em .08em}
+.fr>.fd{border-top:1.3px solid currentColor;padding:.08em .3em 0;align-self:stretch}
+sup .fr,sub .fr{font-size:.95em;margin:0 .05em;vertical-align:middle}
+.lims .fr{font-size:.92em}
+.rt{display:inline-flex;align-items:stretch;vertical-align:middle;margin:0 .08em;white-space:nowrap}
+.rt .sg{position:relative;width:.72em;flex-shrink:0}
+.rt .sg svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.rt .rd{border-top:1.3px solid currentColor;padding:.1em .12em 0 .1em;display:inline-flex;align-items:center}
+.par{display:inline-flex;align-items:center;vertical-align:middle;gap:.1em}
+.par .pl,.par .pr{align-self:stretch;display:inline-flex;align-items:center}
+.par:has(.fr) .pl,.par:has(.fr) .pr{font-size:1.9em;font-weight:200;line-height:.8}
+.par>.pc{display:inline-block}
+/* integral con límites, barra de Barrow y sistema con llave */
+.itg{display:inline-flex;align-items:stretch;vertical-align:middle;margin:0 .16em 0 .1em;white-space:nowrap}
+.itg .ig{font-size:1.75em;line-height:1.15;display:inline-flex;align-items:center;font-style:normal}
+.lims{display:inline-flex;flex-direction:column;justify-content:space-between;align-self:stretch;font-size:.68em;line-height:1.1;white-space:nowrap;margin-left:.06em;text-align:left}
+.lims.uno{justify-content:flex-end}
+.lims>span{display:block;min-height:.2em}
+.ev{display:inline-flex;align-items:stretch;vertical-align:middle;margin:0 .1em;white-space:nowrap}
+.ev>.evb{display:inline-flex;align-items:center;border-right:1.3px solid currentColor;padding:.28em .22em .28em 0}
+.ev>.lims{margin-left:.2em}
+.sis{display:inline-flex;align-items:stretch;vertical-align:middle;margin:.15em .2em}
+.llave-w{position:relative;flex-shrink:0;align-self:stretch;width:.62em;min-width:8px;margin-right:.3em}
+.llave-w>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sis-l{display:inline-flex;flex-direction:column;justify-content:center;gap:.25em;padding:.2em 0;text-align:left}
+.sis-r{display:block;white-space:nowrap}
+.cpos{color:#16a34a} .cneg{color:#dc2626}
+
+/* ---------- chrome oficial ---------- */
+.topbar{background:linear-gradient(135deg,var(--navy) 0%,#1a3a6e 100%);color:#e0f2fe;padding:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.topbar-inner{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-inspt{font-size:12px;color:#7dd3fc;letter-spacing:.1em;font-weight:700}
+.brand-title{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700}
+.brand-sub{font-size:12px;color:#bfdbfe}
+.lab-logo{background:var(--lab-cream);padding:8px 18px 7px;border-radius:12px;text-align:left;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.lab-name{display:flex;align-items:center;font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:700;letter-spacing:-0.01em;line-height:1.2}
+.lab-name .bullet{width:8px;height:8px;border-radius:50%;background:var(--lab-terra);flex-shrink:0;margin-right:7px}
+.lab-name .lab{color:var(--lab-dark)} .lab-name .best{color:var(--lab-terra)} .lab-name .ia{color:var(--lab-blue)}
+.lab-sub{color:var(--lab-gray);font-size:11px;font-weight:500;margin-top:1px;padding-left:15px;font-family:'Outfit',sans-serif}
+.site-footer{background:var(--navy);color:#cbd5e1;padding:30px 0 24px;margin-top:40px}
+.footer-inner{max-width:1160px;margin:0 auto;padding:0 20px;text-align:center}
+.footer-quote{font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;color:#e0f2fe;margin-bottom:16px}
+.footer-lab{display:inline-block;background:var(--lab-cream);padding:10px 22px 9px;border-radius:12px;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.footer-lab .lab-name{font-size:17px} .footer-lab .lab-sub{font-size:12px}
+
+/* ---------- pestañas ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:#fff;border-bottom:1px solid var(--g200);box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.tabs-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;overflow-x:auto}
+.tab-btn{flex:0 0 auto;padding:14px 16px;border:none;background:none;font-size:15px;font-weight:700;color:var(--g600);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab-btn:hover{color:var(--navy);background:var(--g50)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-btn .tn{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--g200);color:var(--g700);font-size:12px;align-items:center;justify-content:center;margin-right:8px}
+.tab-btn.active .tn{background:var(--blue);color:#fff}
+.prog{margin-left:auto;padding:0 16px;font-size:12.5px;color:var(--g600);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.prog .bar{width:90px;height:6px;background:var(--g200);border-radius:99px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .4s}
+.tab-content{display:none} .tab-content.active{display:block;animation:aparecer .35s ease}
+@keyframes aparecer{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tab-content.active{animation:none}html{scroll-behavior:auto}}
+main{max-width:1160px;margin:0 auto;padding:22px 20px 40px;overflow-x:hidden;scroll-margin-top:56px}
+
+.banner{background:linear-gradient(135deg,var(--navy),#1a3a6e 60%,#234b8a);color:#e0f2fe;border-radius:var(--rl);padding:24px 28px;margin-bottom:16px;position:relative;overflow:hidden}
+.banner h1{color:#fff;margin-bottom:6px}
+.banner .kick{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7dd3fc;font-weight:700;margin-bottom:6px}
+.banner p{color:#dbeafe;max-width:74ch;margin:0;position:relative;z-index:1} .banner strong{color:#fff}
+.banner .wm{position:absolute;right:6px;bottom:-34px;font-family:var(--mathfont);font-size:7rem;color:rgba(255,255,255,.06);pointer-events:none;white-space:nowrap}
+
+.card{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:22px 24px;margin-bottom:20px;border-top:4px solid var(--ej);min-width:0;scroll-margin-top:70px}
+.card.pr{border-top-color:var(--int)}
+.sec-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.sec-h .num{font-family:'Fraunces',serif;font-weight:700;color:var(--blue);font-size:1.3rem}
+.nota{font-size:.9rem;color:var(--g600)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.grid2>*{min-width:0}
+@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+
+.box{border-radius:10px;padding:11px 15px;margin:10px 0;font-size:.97rem;border:1px solid var(--g200);background:#fff}
+.box .bt{font-weight:700;display:block;margin-bottom:3px;font-size:.9rem;letter-spacing:.02em}
+.box>ol:last-child,.box>ul:last-child,.box>p:last-child{margin-bottom:0}
+.def{background:var(--def-bg);border:1px solid var(--def-bd);border-left:4px solid var(--def);color:#1e3a8a} .def .bt{color:var(--def)} .def strong{color:#1e3a8a}
+.voz{background:var(--amb-bg);border:1px solid var(--amb-bd);border-left:4px solid var(--amb);color:#78350f} .voz .bt{color:var(--amb)} .voz strong{color:#78350f}
+.err{background:var(--err-bg);border:1px solid var(--err-bd);border-left:4px solid var(--err);color:#881337} .err .bt{color:var(--err)}
+.okb{background:var(--ok-bg);border:1px solid var(--ok-bd);border-left:4px solid var(--ok);color:#064e3b} .okb .bt{color:var(--ok)}
+.tbl{overflow-x:auto;margin:10px 0}
+.tbl table{border-collapse:collapse;width:100%;font-size:14.5px;background:#fff}
+.tbl th,.tbl td{border:1px solid var(--g200);padding:8px 10px;text-align:left;vertical-align:middle}
+.tbl th{background:var(--g100);font-weight:700;color:var(--navy)}
+.tbl td.k{font-weight:700;color:var(--navy)}
+.tbl td .md{margin:0;text-align:left;font-size:1.08em;white-space:nowrap}
+.tbl table.ancha{min-width:680px}
+.malbien{margin-top:10px;gap:12px}
+.mb{background:#fff;border:1.5px solid var(--g200);border-radius:10px;padding:10px 14px;color:var(--g800)}
+.mb .mbt{display:block;font-weight:700;margin-bottom:4px}
+.mb.mal{border-color:var(--err-bd)} .mb.mal .mbt{color:var(--err)}
+.mb.bien{border-color:var(--ok-bd)} .mb.bien .mbt{color:var(--ok)}
+.mb .md{font-size:1.08em}
+.nota-modelo{font-size:.82rem;color:var(--g500);border:1px dashed var(--g300);border-radius:8px;padding:5px 10px;margin-top:8px;background:var(--g50)}
+
+/* acordeones y pasos */
+.acc{border:1px solid var(--g200);border-radius:10px;margin:10px 0;background:#fff;overflow:hidden}
+.acc>.acc-h{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none;font-weight:600;color:var(--navy);background:var(--g50)}
+.acc>.acc-h:hover{background:var(--g100)}
+.acc>.acc-h .acc-t{flex:1;min-width:0}
+.acc>.acc-h .chev{margin-left:auto;transition:transform .2s;color:var(--g500);font-size:12px}
+.acc.open>.acc-h .chev{transform:rotate(180deg)}
+.acc>.acc-b{display:none;padding:12px 16px 14px;border-top:1px solid var(--g200)}
+.acc.open>.acc-b{display:block}
+.acc.teo>.acc-h{background:var(--def-bg);color:var(--def)}
+.acc.step>.acc-h{background:#fff}
+.acc.step>.acc-h .sn{background:var(--ej);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.btn{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)} .btn.primary:hover{background:var(--navy);color:#fff}
+.btn.on{background:var(--def-bg);border-color:var(--blue);color:var(--blue)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn.alerta{border-color:var(--err);color:var(--err)}
+
+/* exploradores */
+.labo{background:#fff;border:1px solid var(--g200);border-radius:var(--rl);padding:18px 20px;margin:16px 0 20px;box-shadow:var(--sh);scroll-margin-top:70px}
+.lab-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.lab-tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#fff;background:var(--int);padding:2px 9px;border-radius:999px}
+.ex-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.ex-grid>div{min-width:0}
+@media(max-width:900px){.ex-grid{grid-template-columns:minmax(0,1fr)}}
+.ex-col{display:flex;flex-direction:column;gap:10px}
+canvas.c2d{width:100%;display:block;border:1px solid var(--g200);border-radius:8px;background:#fff}
+.ctrl{display:flex;flex-direction:column;gap:8px}
+.ctrl label{font-size:13.5px;font-weight:600;color:var(--g700);display:flex;flex-direction:column;gap:3px}
+.ctrl label .lv{display:flex;justify-content:space-between;gap:8px}
+.ctrl label .val{font-family:var(--mathfont);color:var(--blue);font-weight:400}
+.ctrl input[type=range]{width:100%;accent-color:var(--blue)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg-b{border:1.5px solid var(--g300);background:#fff;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;line-height:1.5}
+.seg-b:hover{border-color:var(--blue)}
+.seg-b.on{background:var(--def-bg);border-color:var(--blue);color:var(--def)}
+.seg-t{font-size:12px;font-weight:700;color:var(--g500);letter-spacing:.04em;text-transform:uppercase;margin-bottom:-4px}
+.cadena{display:flex;flex-direction:column;gap:6px}
+.cad-paso{display:flex;gap:10px;align-items:flex-start;background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:8px 12px}
+.cad-paso>div{min-width:0}
+.cad-paso .cad-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--g400);color:#fff;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-top:2px}
+.cad-paso .cad-t{font-size:.8rem;font-weight:700;color:var(--g500);letter-spacing:.02em}
+.cad-paso .cad-c{font-size:1rem;line-height:1.9;overflow-wrap:anywhere}
+.cad-paso .cad-c .mi{white-space:normal}
+.cad-paso.cx{border-color:#86efac;background:#f0fdf4} .cad-paso.cx .cad-n{background:var(--cx)}
+.cad-paso.cy{border-color:#fcd34d;background:#fffbeb} .cad-paso.cy .cad-n{background:var(--cy)}
+.cad-paso.res{border-color:var(--blue);background:var(--def-bg)} .cad-paso.res .cad-n{background:var(--blue)}
+.cad-paso.act{box-shadow:inset 0 0 0 1.5px var(--blue)}
+.interp{font-size:.93rem;color:var(--g700);background:#fff;border:1px solid var(--g200);border-radius:8px;padding:8px 12px}
+.leyenda{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--g600)}
+.leyenda span::before{content:'';display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:3px;background:var(--c)}
+
+/* ejercicios */
+.q{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:16px 18px;margin:12px 0}
+.q .qn{font-weight:700;color:var(--navy);margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.q .qn .k{display:inline-flex;min-width:28px;height:26px;border-radius:7px;background:var(--ej);color:#fff;font-size:12.5px;align-items:center;justify-content:center;flex-shrink:0;padding:0 6px}
+.q .enq{font-weight:500;color:var(--g800);flex:1;min-width:0}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.badge.ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}
+.opts{display:grid;gap:6px;margin:8px 0}
+.opt{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;cursor:pointer;background:#fff;text-align:left;font-size:.96rem;color:var(--g800)}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt .k{font-weight:700;color:var(--g500);flex-shrink:0}
+.opt>span:last-child{min-width:0;overflow-x:auto}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)} .opt.wrong{border-color:var(--err);background:var(--err-bg)}
+.opt:disabled{cursor:default}
+.numin{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.numin input{font-family:var(--mathfont);font-size:16px;padding:6px 9px;border:1.5px solid var(--g300);border-radius:8px;width:110px}
+.numin input:disabled{background:var(--g50)}
+.numin .lb{font-family:var(--mathfont);font-size:1.05em}
+.fb{display:none;margin-top:8px;padding:9px 12px;border-radius:8px;font-size:.95rem}
+.fb.show{display:block}
+.fb.ok{background:var(--ok-bg);border:1px solid var(--ok-bd);color:#064e3b}
+.fb.no{background:var(--err-bg);border:1px solid var(--err-bd);color:#881337}
+.resol{display:none;margin-top:10px;border-top:1px dashed var(--g300);padding-top:8px}
+.resol.show{display:block}
+.resol .md{text-align:left}
+button:focus-visible,input:focus-visible,.acc-h:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:24px;flex-wrap:wrap}
+
+@media(max-width:640px){
+  .topbar-inner{justify-content:center;text-align:center}
+  main{padding:16px 16px 30px}
+  .card{padding:16px 14px} .labo{padding:14px 12px}
+  .banner{padding:20px 18px} .banner .wm{font-size:4.6rem;bottom:-22px}
+  .md{font-size:1.04em}
+  .tab-btn{padding:12px 10px;font-size:14px}
+  .tab-btn .tn{margin-right:5px}
+  .tab-btn .lg{display:none}
+  .prog{display:none}
+  .acc>.acc-b{padding:10px 10px 12px}
+}
+@media print{
+  .tabs,.tools,.pager{display:none!important}
+  .tab-content{display:block!important} .acc>.acc-b,.resol{display:block!important}
+  body{background:#fff} .card,.q{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div>
+        <div class="brand-inspt">I·N·S·P·T &nbsp;·&nbsp; UTN</div>
+        <div class="brand-title">Recintos e integrales dobles</div>
+        <div class="brand-sub">Análisis Matemático II · Tecnicatura Superior en Química</div>
+      </div>
+    </div>
+    <div class="lab-logo">
+      <div class="lab-name"><span class="bullet"></span><span class="lab">laboratorio</span><span class="best">best</span><span class="ia">-IA</span></div>
+      <div class="lab-sub">Prof. Ariel L. Cardozo Delgado</div>
+    </div>
+  </div>
+</header>
+<nav class="tabs" aria-label="Temas">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-tab="recintos"><span class="tn">1</span>Recintos</button>
+    <button class="tab-btn" data-tab="dobles"><span class="tn">2</span>Integrales<span class="lg"> dobles</span></button>
+    <button class="tab-btn" data-tab="volumen"><span class="tn">3</span>Volúmenes<span class="lg"> y áreas</span></button>
+    <button class="tab-btn" data-tab="resumen"><span class="tn">4</span>Resumen</button>
+    <div class="prog"><span id="prog-txt">0 de 0 ejercicios</span><div class="bar"><i id="prog-bar"></i></div></div>
+  </div>
+</nav>
+<main>
+
+<!-- ======================= PESTAÑA 1 · RECINTOS ======================= -->
+<section id="tab-recintos" class="tab-content active">
+  <div class="banner">
+    <div class="kick">Tema 1 · Revisión de Análisis Matemático I</div>
+    <h1>Recintos</h1>
+    <p>Para calcular una integral doble, primero hay que saber describir la región del plano sobre la que se integra. Ese trabajo ya lo hiciste en Análisis I al calcular áreas entre curvas: acá lo repasamos y lo dejamos listo para integrar.</p>
+    <div class="wm" aria-hidden="true">R</div>
+  </div>
+
+  <div class="card" id="r1">
+    <div class="sec-h"><span class="num">1</span><h2>La idea</h2></div>
+    <div class="grid2">
+      <div>
+        <p>Un <strong>recinto</strong> es una región del plano encerrada por curvas; por ejemplo, la que queda entre la parábola \(y=x^2\) y la recta \(y=x+2\). <strong>Describirlo</strong> es decir, con desigualdades, qué puntos \((x;y)\) están adentro. Hay dos maneras de recorrerlo.</p>
+        <div class="box def"><span class="bt">Con franjas verticales</span>Se fija \(x\) entre dos números y se mira entre qué curvas se mueve \(y\):
+          \[R:\sis{a\le x\le b \\ g_1(x)\le y\le g_2(x)}\]
+          \(g_1\) es el <strong>piso</strong> (por donde la franja entra al recinto) y \(g_2\) es el <strong>techo</strong> (por donde sale).</div>
+        <div class="box def"><span class="bt">Con franjas horizontales</span>Se fija \(y\) entre dos números y se mira entre qué curvas se mueve \(x\):
+          \[R:\sis{c\le y\le d \\ h_1(y)\le x\le h_2(y)}\]
+          \(h_1\) es el borde izquierdo y \(h_2\), el derecho. Para esto las curvas tienen que estar escritas como \(x\) en función de \(y\).</div>
+      </div>
+      <div>
+        <div class="box voz"><span class="bt">Cómo se arma la descripción</span>
+          <ol>
+            <li><strong>Dibujar</strong> las curvas.</li>
+            <li><strong>Hallar dónde se cortan</strong>: se igualan las ecuaciones. Esos valores son los límites de la variable que se fija.</li>
+            <li><strong>Decidir cuál es el techo y cuál el piso</strong>: se evalúan las dos curvas en un valor intermedio y se comparan.</li>
+            <li><strong>Escribir las dos desigualdades</strong>: la de la variable fija, entre números; la de la otra, entre curvas.</li>
+          </ol></div>
+        <div class="box def"><span class="bt">El área, como en Análisis I</span>
+          \[A=\int_a^b\left[g_2(x)-g_1(x)\right]\dd x\]
+          Techo menos piso es el largo de cada franja vertical; la integral suma los largos de todas las franjas.</div>
+      </div>
+    </div>
+    <div class="box err"><span class="bt">El error más frecuente: restar al revés</span>
+      Para el recinto entre \(y=x^2\) e \(y=x\), con \(0\le x\le1\), hay que saber cuál de las dos curvas va arriba. En \(x=\dfrac{1}{2}\) la recta vale \(\dfrac{1}{2}=0{,}5\) y la parábola vale \(\left(\dfrac{1}{2}\right)^2=\dfrac{1}{4}=0{,}25\): la recta es el techo.
+      <div class="grid2 malbien">
+        <div class="mb mal"><span class="mbt">✗ Así no</span>
+          Parábola menos recta:
+          \[\int_0^1\left(x^2-x\right)\dd x=\ev{\frac{x^3}{3}-\frac{x^2}{2}}_0^1\]
+          \[=\left(\frac{1^3}{3}-\frac{1^2}{2}\right)-\left(\frac{0^3}{3}-\frac{0^2}{2}\right)=\frac{1}{3}-\frac{1}{2}-0\]
+          \[=\frac{2}{6}-\frac{3}{6}=-\frac{1}{6}\]
+          Un área no puede ser negativa: el signo delata que el piso quedó arriba.</div>
+        <div class="mb bien"><span class="mbt">✓ Así sí</span>
+          Techo menos piso, recta menos parábola:
+          \[\int_0^1\left(x-x^2\right)\dd x=\ev{\frac{x^2}{2}-\frac{x^3}{3}}_0^1\]
+          \[=\left(\frac{1^2}{2}-\frac{1^3}{3}\right)-\left(\frac{0^2}{2}-\frac{0^3}{3}\right)=\frac{1}{2}-\frac{1}{3}-0\]
+          \[=\frac{3}{6}-\frac{2}{6}=\frac{1}{6}\]
+          El área del recinto es \(\dfrac{1}{6}\).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="r2">
+    <div class="sec-h"><span class="num">2</span><h2>Ejemplos paso a paso</h2></div>
+    <div id="ej-recintos"></div>
+  </div>
+
+  <div class="labo" id="r3">
+    <div class="lab-head"><span class="lab-tag">Explorador</span><h3>Recorrer el recinto con una franja</h3></div>
+    <p>Elegí un recinto y la dirección de las franjas, y mové la franja con el deslizador. El punto verde marca por dónde entra y el ámbar, por dónde sale: las curvas sobre las que están esos dos puntos son los límites de la variable que se mueve. En el primer recinto, probá las franjas horizontales y mirá qué pasa al cruzar \(y=1\).</p>
+    <div id="ex-recintos"></div>
+  </div>
+
+  <div class="card pr" id="r4">
+    <div class="sec-h"><span class="num">3</span><h2>Práctica</h2></div>
+    <p class="nota">Cada respuesta se corrige al instante; si te equivocás, aparece una pista. La resolución se habilita después del primer intento. Los números se escriben con coma o punto decimal, o como fracción con barra.</p>
+    <div id="prac-recintos"></div>
+  </div>
+  <div class="pager"><span></span><button class="btn primary" data-ir="dobles">Tema 2: integrales dobles →</button></div>
+</section>
+
+<!-- ======================= PESTAÑA 2 · INTEGRALES DOBLES ======================= -->
+<section id="tab-dobles" class="tab-content">
+  <div class="banner">
+    <div class="kick">Tema 2</div>
+    <h1>Integrales dobles</h1>
+    <p>Una integral doble se calcula con dos integrales simples, una adentro de la otra. La de adentro se resuelve con una variable quieta, igual que al derivar parcialmente.</p>
+    <div class="wm" aria-hidden="true">∬</div>
+  </div>
+
+  <div class="card" id="d1">
+    <div class="sec-h"><span class="num">1</span><h2>La idea</h2></div>
+    <div class="grid2">
+      <div>
+        <p>Para integrar \(f(x;y)\) sobre un recinto \(R\) se lo recorre con franjas. En cada franja vertical \(x\) está fija: se integra respecto de \(y\), desde el piso hasta el techo. Después se integran, respecto de \(x\), los resultados de todas las franjas.</p>
+        <div class="box def"><span class="bt">La integral doble como integral iterada</span>
+          Si \(R\) se describe con franjas verticales, \(a\le x\le b\) y \(g_1(x)\le y\le g_2(x)\):
+          \[\iint_R f(x;y)\dd A=\int_a^b\left[\int_{g_1(x)}^{g_2(x)}f(x;y)\dd y\right]\dd x\]
+          Si se describe con franjas horizontales, \(c\le y\le d\) y \(h_1(y)\le x\le h_2(y)\):
+          \[\iint_R f(x;y)\dd A=\int_c^d\left[\int_{h_1(y)}^{h_2(y)}f(x;y)\dd x\right]\dd y\]
+          Los dos órdenes dan el mismo número.</div>
+        <div class="box def"><span class="bt">Si el recinto es un rectángulo</span>Con \(a\le x\le b\) y \(c\le y\le d\) los cuatro límites son números, y cambiar el orden es solo intercambiar los límites:
+          \[\int_a^b\int_c^d f(x;y)\dd y\dd x=\int_c^d\int_a^b f(x;y)\dd x\dd y\]</div>
+      </div>
+      <div>
+        <div class="box voz"><span class="bt">Cómo leerla</span>
+          <ul>
+            <li>Se resuelve <strong>de adentro hacia afuera</strong>.</li>
+            <li>En la integral de adentro, la otra variable es una constante. Así como una primitiva de 5 respecto de \(y\) es \(5y\), una primitiva de \(2x\) respecto de \(y\) es \(2x\cdot y\).</li>
+            <li>Los límites de adentro pueden depender de la variable de afuera; los de afuera son <strong>siempre números</strong>.</li>
+            <li>La integral de adentro deja, en general, una función de la variable de afuera (a veces, una constante). La de afuera deja un número.</li>
+            <li>\(\dd A\) es el área de un pedacito del recinto: se escribe \(\dd y\dd x\) o \(\dd x\dd y\), según el orden elegido. El diferencial de adentro dice respecto de qué variable se integra primero.</li>
+          </ul></div>
+      </div>
+    </div>
+    <div class="box err"><span class="bt">El error más frecuente: integrar respecto de la variable equivocada</span>
+      Se pide \(\iint_R 2x\dd A\) sobre el rectángulo \(0\le x\le1\), \(0\le y\le2\), planteada como \(\int_0^1\left[\int_0^2 2x\dd y\right]\dd x\). En la integral de adentro el diferencial es \(\dd y\): la variable es \(y\), y \(2x\) es una constante.
+      <div class="grid2 malbien">
+        <div class="mb mal"><span class="mbt">✗ Así no</span>
+          Integrar \(2x\) como si la variable fuera \(x\):
+          \[\int_0^2 2x\dd y=\ev{x^2}_0^2=2^2-0^2=4\]
+          \[\int_0^1 4\dd x=\ev{4x}_0^1=4\cdot1-4\cdot0=4\]
+          Los límites 0 y 2 son de \(y\), pero se reemplazaron en \(x\). Otra señal: acá el resultado de la integral de adentro tenía que seguir dependiendo de \(x\), y quedó un número.</div>
+        <div class="mb bien"><span class="mbt">✓ Así sí</span>
+          Con \(x\) fija, la primitiva de \(2x\) respecto de \(y\) es \(2x\cdot y\):
+          \[\int_0^2 2x\dd y=\ev{2x\cdot y}_0^2=2x\cdot2-2x\cdot0=4x\]
+          \[\int_0^1 4x\dd x=\ev{2x^2}_0^1=2\cdot1^2-2\cdot0^2=2-0=2\]
+          La integral doble vale 2.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="d2">
+    <div class="sec-h"><span class="num">2</span><h2>Ejemplos paso a paso</h2></div>
+    <div id="ej-dobles"></div>
+  </div>
+
+  <div class="labo" id="d3">
+    <div class="lab-head"><span class="lab-tag">Explorador</span><h3>La integral de adentro, franja por franja</h3></div>
+    <p>Mové la franja. El panel resuelve la integral de adentro para ese valor de \(x\): un número distinto en cada franja. El segundo gráfico junta todos esos resultados en una curva; la integral de afuera es el área bajo esa curva.</p>
+    <div id="ex-dobles"></div>
+  </div>
+
+  <div class="card pr" id="d4">
+    <div class="sec-h"><span class="num">3</span><h2>Práctica</h2></div>
+    <p class="nota">Cada respuesta se corrige al instante; si te equivocás, aparece una pista. La resolución se habilita después del primer intento. Los números se escriben con coma o punto decimal, o como fracción con barra.</p>
+    <div id="prac-dobles"></div>
+  </div>
+  <div class="pager"><button class="btn" data-ir="recintos">← Tema 1</button><button class="btn primary" data-ir="volumen">Tema 3: volúmenes y áreas →</button></div>
+</section>
+
+<!-- ======================= PESTAÑA 3 · VOLÚMENES Y ÁREAS ======================= -->
+<section id="tab-volumen" class="tab-content">
+  <div class="banner">
+    <div class="kick">Tema 3</div>
+    <h1>Volúmenes y áreas</h1>
+    <p>La integral doble de una altura sobre un piso es un volumen. Y si la altura es 1, es el área del piso.</p>
+    <div class="wm" aria-hidden="true">V</div>
+  </div>
+
+  <div class="card" id="v1">
+    <div class="sec-h"><span class="num">1</span><h2>La idea</h2></div>
+    <div class="grid2">
+      <div>
+        <p>Sobre un recinto \(R\) del plano \(xy\) se levanta un sólido cuyo techo es la superficie \(z=f(x;y)\). Para medir su volumen se corta el piso en rectángulos pequeños, de área \(\Delta A\), y sobre cada uno se levanta una columna hasta el techo:</p>
+        \[\text{volumen de una columna}=\text{altura}\cdot\text{área de la base}=f(x;y)\cdot\Delta A\]
+        <p>La suma de las columnas aproxima el volumen. Con columnas cada vez más finas, esa suma tiende a la integral doble.</p>
+        <div class="box def"><span class="bt">Volumen bajo una superficie</span>Si \(f(x;y)\ge0\) en todo el recinto \(R\):
+          \[V=\iint_R f(x;y)\dd A\]</div>
+        <div class="box def"><span class="bt">Área de un recinto</span>
+          \[A(R)=\iint_R 1\dd A\]
+          Un sólido de altura 1 tiene tantas unidades de volumen como unidades de área tiene su base.</div>
+      </div>
+      <div>
+        <div class="box voz"><span class="bt">Cómo leerla</span>
+          <ul>
+            <li><strong>Altura por base.</strong> \(f(x;y)\) es la altura del sólido sobre el punto \((x;y)\) y \(\dd A\) es un pedacito de piso. Si las tres longitudes están en centímetros, el resultado queda en \(\text{cm}\cdot\text{cm}^2=\text{cm}^3\).</li>
+            <li><strong>Tajadas.</strong> La integral de adentro, \(\int f(x;y)\dd y\), es el área de la tajada que se obtiene al cortar el sólido con un plano vertical de \(x\) fija. La de afuera suma las tajadas.</li>
+            <li><strong>Con altura 1</strong> la integral de adentro da techo menos piso del recinto, y reaparece la fórmula del área de Análisis I.</li>
+            <li><strong>Antes de integrar</strong>, verificar que el techo no sea negativo en ningún punto del recinto.</li>
+          </ul></div>
+      </div>
+    </div>
+    <div class="box err"><span class="bt">El error más frecuente: llamar volumen a una integral con techo negativo</span>
+      Techo \(z=x\) sobre el rectángulo \(-1\le x\le1\), \(0\le y\le1\). La integral de adentro es \(\int_0^1 x\dd y=\ev{x\cdot y}_0^1=x\cdot1-x\cdot0=x\).
+      <div class="grid2 malbien">
+        <div class="mb mal"><span class="mbt">✗ Así no</span>
+          Integrar de corrido y llamar volumen al resultado:
+          \[\int_{-1}^{1}x\dd x=\ev{\frac{x^2}{2}}_{-1}^{1}=\frac{1^2}{2}-\frac{(-1)^2}{2}=\frac{1}{2}-\frac{1}{2}=0\]
+          Volumen cero, pero el sólido existe: son dos cuñas. Donde \(x\lt0\) el techo queda por debajo del piso y la integral <strong>resta</strong> esa parte.</div>
+        <div class="mb bien"><span class="mbt">✓ Así sí</span>
+          Se separa donde el techo cambia de signo, en \(x=0\). Parte con techo positivo y parte con techo negativo, \(N\):
+          \[\int_0^1 x\dd x=\ev{\frac{x^2}{2}}_0^1=\frac{1^2}{2}-\frac{0^2}{2}=\frac{1}{2}-0=\frac{1}{2}\]
+          \[N=\int_{-1}^{0}x\dd x=\ev{\frac{x^2}{2}}_{-1}^{0}=\frac{0^2}{2}-\frac{(-1)^2}{2}=0-\frac{1}{2}=-\frac{1}{2}\]
+          \[V=\frac{1}{2}-\left(-\frac{1}{2}\right)=\frac{1}{2}+\frac{1}{2}=1\]</div>
+      </div>
+      A la integral completa conviene llamarla \(I\), no \(V\). Si ya se calculó \(I\), el volumen sale de \(V=I-2N\); acá, \(V=0-2\cdot\left(-\dfrac{1}{2}\right)=0+1=1\).
+    </div>
+  </div>
+
+  <div class="card" id="v2">
+    <div class="sec-h"><span class="num">2</span><h2>Ejemplos paso a paso</h2></div>
+    <div id="ej-volumen"></div>
+  </div>
+
+  <div class="labo" id="v3">
+    <div class="lab-head"><span class="lab-tag">Explorador</span><h3>El volumen, columna por columna</h3></div>
+    <p>El piso se corta en rectángulos y sobre cada uno se levanta una columna cuya altura es la del techo en el centro de la base. Aumentá la cantidad de columnas y compará la suma con el valor exacto de la integral. Las líneas oscuras dibujan el techo verdadero.</p>
+    <div id="ex-volumen"></div>
+  </div>
+
+  <div class="card pr" id="v4">
+    <div class="sec-h"><span class="num">3</span><h2>Práctica</h2></div>
+    <p class="nota">Cada respuesta se corrige al instante; si te equivocás, aparece una pista. La resolución se habilita después del primer intento. Los números se escriben con coma o punto decimal, o como fracción con barra.</p>
+    <div id="prac-volumen"></div>
+  </div>
+  <div class="pager"><button class="btn" data-ir="dobles">← Tema 2</button><button class="btn primary" data-ir="resumen">Resumen →</button></div>
+</section>
+
+<!-- ======================= PESTAÑA 4 · RESUMEN ======================= -->
+<section id="tab-resumen" class="tab-content">
+  <div class="banner">
+    <div class="kick">Para repasar</div>
+    <h1>Resumen</h1>
+    <p>Todo el recorrido en una página: las fórmulas, qué dice cada una y los errores que conviene evitar.</p>
+    <div class="wm" aria-hidden="true">Σ</div>
+  </div>
+  <div class="card">
+    <div class="sec-h"><h2>Las fórmulas</h2></div>
+    <div class="tbl"><table class="ancha"><thead><tr><th>Concepto</th><th>Fórmula</th><th>Qué dice</th></tr></thead><tbody>
+      <tr><td class="k">Recinto con franjas verticales</td><td>\[R:\sis{a\le x\le b \\ g_1(x)\le y\le g_2(x)}\]</td><td>\(x\) entre números; \(y\) entre el piso \(g_1\) y el techo \(g_2\).</td></tr>
+      <tr><td class="k">Recinto con franjas horizontales</td><td>\[R:\sis{c\le y\le d \\ h_1(y)\le x\le h_2(y)}\]</td><td>\(y\) entre números; \(x\) entre el borde izquierdo \(h_1\) y el derecho \(h_2\).</td></tr>
+      <tr><td class="k">Área entre curvas (Análisis I)</td><td>\[A=\int_a^b\left[g_2(x)-g_1(x)\right]\dd x\]</td><td>Suma de los largos de las franjas: techo menos piso.</td></tr>
+      <tr><td class="k">Integral doble, franjas verticales</td><td>\[\iint_R f\dd A=\int_a^b\int_{g_1(x)}^{g_2(x)}f(x;y)\dd y\dd x\]</td><td>Primero respecto de \(y\) con \(x\) fija; después respecto de \(x\).</td></tr>
+      <tr><td class="k">Integral doble, franjas horizontales</td><td>\[\iint_R f\dd A=\int_c^d\int_{h_1(y)}^{h_2(y)}f(x;y)\dd x\dd y\]</td><td>Primero respecto de \(x\) con \(y\) fija; después respecto de \(y\). Da el mismo número.</td></tr>
+      <tr><td class="k">Volumen</td><td>\[V=\iint_R f(x;y)\dd A\quad\text{si }f\ge0\text{ en }R\]</td><td>Altura por pedacito de piso, sumado sobre todo el recinto.</td></tr>
+      <tr><td class="k">Área con integral doble</td><td>\[A(R)=\iint_R 1\dd A\]</td><td>Un sólido de altura 1 mide lo mismo que su base.</td></tr>
+      <tr><td class="k">Techo que cambia de signo</td><td>\[V=I-2N\]</td><td>\(I\) es la integral sobre todo \(R\) y \(N\), la integral sobre la parte donde el techo es negativo.</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="sec-h"><h2>Errores frecuentes</h2></div>
+    <div class="tbl"><table><thead><tr><th>Error</th><th>Cómo evitarlo</th></tr></thead><tbody>
+      <tr><td>Restar piso menos techo y obtener un área negativa.</td><td>Evaluar las dos curvas en un valor intermedio antes de plantear: la mayor es el techo.</td></tr>
+      <tr><td>Dividir por \(x\) al buscar los cortes y perder una solución.</td><td>Llevar todo a un miembro y sacar factor común: \(x^2=3x\) da \(x\,(x-3)=0\), con dos soluciones.</td></tr>
+      <tr><td>Poner límites con variables en la integral de afuera.</td><td>Los límites de afuera son siempre números; los que dependen de una variable van adentro.</td></tr>
+      <tr><td>Integrar respecto de la variable equivocada.</td><td>Mirar el diferencial de adentro: con \(\dd y\), la \(x\) es una constante.</td></tr>
+      <tr><td>Cambiar el orden intercambiando los límites en un recinto que no es un rectángulo.</td><td>Volver a describir el recinto con franjas en la otra dirección: cambian los límites.</td></tr>
+      <tr><td>Olvidar restar el valor en el límite inferior.</td><td>Escribir siempre los dos paréntesis de la barra, aunque el segundo dé cero.</td></tr>
+      <tr><td>Llamar volumen a una integral cuyo techo es negativo en parte del recinto.</td><td>Verificar el signo del techo. Si cambia, separar las partes o usar \(V=I-2N\).</td></tr>
+    </tbody></table></div>
+    <div class="tools"><button class="btn" id="btn-reiniciar">Borrar mi progreso</button></div>
+  </div>
+  <div class="pager"><button class="btn" data-ir="volumen">← Tema 3</button><span></span></div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-quote">"La matemática no exige genios, exige constancia."</div>
+    <div class="footer-lab">
+      <div class="lab-name"><span class="bullet"></span><span class="lab">laboratorio</span><span class="best">best</span><span class="ia">-IA</span></div>
+      <div class="lab-sub">Prof. Ariel L. Cardozo Delgado</div>
+    </div>
+  </div>
+</footer>
+<script>
+'use strict';
+/* ================= estado ================= */
+const CLAVE = 'lab_am2_recintos_integrales_dobles_v1';
+let E = { ejercicios:{} };
+function guardar(){ try{ localStorage.setItem(CLAVE, JSON.stringify(E)); }catch(e){} }
+function cargar(){ try{ const c = localStorage.getItem(CLAVE); if(c) E = Object.assign({ejercicios:{}}, JSON.parse(c)); }catch(e){} }
+const $ = id => document.getElementById(id);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lin = (n,a,b) => Array.from({length:n}, (_,i) => a+(b-a)*i/(n-1));
+const R_ = String.raw;
+const fmt = (v, d) => {
+  if(!isFinite(v)) return '—';
+  if(d === undefined){ const a = Math.abs(v); d = a === 0 ? 0 : a >= 100 ? 1 : a >= 10 ? 2 : a >= 1 ? 3 : 4; }
+  let s = (Math.round(v*10**d)/10**d).toFixed(d); if(s.includes('.')) s = s.replace(/\.?0+$/, '');
+  if(s === '-0' || s === '') s = '0';
+  return s.replace('-', '−').replace('.', ',');
+};
+const fmtL = (v, d) => fmt(v, d).replace('−','-').replace(',', '{,}');
+/* número exacto hasta 6 decimales (para sustituir sin redondear) */
+const n6 = v => { let s = (Math.round(v*1e6)/1e6).toFixed(6).replace(/\.?0+$/, ''); if(s === '-0' || s === '') s = '0'; return s.replace('.', '{,}'); };
+const exacto6 = v => Math.abs(v - Math.round(v*1e6)/1e6) < 1e-9;
+const nv = v => exacto6(v) ? ['=', n6(v)] : [R_`\approx`, fmtL(v, 4)];
+const pv = v => v < 0 ? '(' + n6(v) + ')' : n6(v);
+/* cadena de igualdades sin repetir eslabones: expresión general = sustituida = … = valor */
+function cad(partes, v){
+  const out = []; partes.forEach(p => { if(p !== '' && (!out.length || out[out.length-1] !== p)) out.push(p); });
+  let s = out.join('=');
+  if(v !== undefined){ const [rel, str] = nv(v); if(out[out.length-1] !== str) s += (s ? rel : '') + str; }
+  return s;
+}
+
+/* ================= mini-TeX → HTML (STIX, cursiva solo en variables, fracciones apiladas) ================= */
+const TEX_SYM = { cdot:' · ', times:' × ', to:' → ', approx:' ≈ ', le:' ≤ ', leq:' ≤ ', ge:' ≥ ', geq:' ≥ ', lt:' &lt; ', gt:' &gt; ', ne:' ≠ ', neq:' ≠ ', infty:'∞', pm:' ± ', ldots:'…', in:' ∈ ', quad:'&ensp;', qquad:'&emsp;', Delta:'Δ', pi:'π', Rightarrow:' ⇒ ' };
+const TEX_OPS = ['sen','cos','ln','lim','max','min'];
+const SVG_RAD = '<svg viewBox="0 0 22 40" preserveAspectRatio="none" aria-hidden="true"><path d="M1 25 L6.5 22.5 L11.5 37 L21 1.2" fill="none" stroke="currentColor" stroke-width="1.35" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+const SVG_LLAVE = '<svg viewBox="0 0 10 100" preserveAspectRatio="none" aria-hidden="true"><path d="M9.2 1.2 C4.6 1.6 5 6 5 14 L5 40 C5 46 4 49.4 1 50 C4 50.6 5 54 5 60 L5 86 C5 94 4.6 98.4 9.2 98.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>';
+function splitTop(s, sep){ const out = []; let d = 0, cur = ''; for(let i = 0; i < s.length; i++){ const c = s[i]; if(c === '{') d++; else if(c === '}') d--; if(d === 0 && s.startsWith(sep, i)){ out.push(cur); cur = ''; i += sep.length-1; continue; } cur += c; } out.push(cur); return out; }
+function texToHtml(s){
+  let i = 0; let last = 'open'; let out = '';
+  const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+  const readGroup = () => { let depth = 0, j = i; for(; j < s.length; j++){ if(s[j] === '{') depth++; else if(s[j] === '}'){ depth--; if(depth === 0) break; } } const inner = s.slice(i+1, j); i = j+1; return inner; };
+  const readArg = () => { while(s[i] === ' ') i++; if(s[i] === '{') return readGroup(); if(s[i] === '\\'){ let j = i+1; while(j < s.length && /[a-zA-Z]/.test(s[j])) j++; if(j === i+1) j++; const t = s.slice(i, j); i = j; return t; } const c = s[i]; i++; return c; };
+  const readLims = () => { let lo = '', hi = ''; for(let k = 0; k < 2; k++){ while(s[i] === ' ') i++; if(s[i] === '_'){ i++; lo = readArg(); } else if(s[i] === '^'){ i++; hi = readArg(); } } return [lo, hi]; };
+  const limsHtml = (lo, hi) => (lo === '' && hi === '') ? '' : `<span class="lims${hi === '' ? ' uno' : ''}"><span>${texToHtml(hi)}</span><span>${texToHtml(lo)}</span></span>`;
+  const push = (h, kind) => { out += h; last = kind; };
+  while(i < s.length){
+    const c = s[i];
+    if(c === ' ' || c === '\n' || c === '\t'){ i++; continue; }
+    if(c === '{'){ push(texToHtml(readGroup()), 'atom'); continue; }
+    if(c === '}'){ i++; continue; }
+    if(c === '^'){ i++; push('<sup>' + texToHtml(readArg()) + '</sup>', 'atom'); continue; }
+    if(c === '_'){ i++; push('<sub>' + texToHtml(readArg()) + '</sub>', 'atom'); continue; }
+    if(c === '\\'){
+      let j = i+1; while(j < s.length && /[a-zA-Z]/.test(s[j])) j++;
+      let cmd; if(j === i+1){ cmd = s[i+1]; i += 2; } else { cmd = s.slice(i+1, j); i = j; }
+      if(cmd === ',' || cmd === ';' || cmd === ' '){ out += '&thinsp;'; continue; }
+      if(cmd === '!') continue;
+      if(cmd === '{' || cmd === '}' || cmd === '%'){ push(esc(cmd), 'atom'); continue; }
+      if(cmd === 'frac' || cmd === 'dfrac'){ const a = readArg(), b = readArg(); push(`<span class="fr"><span class="fn">${texToHtml(a)}</span><span class="fd">${texToHtml(b)}</span></span>`, 'atom'); continue; }
+      if(cmd === 'sqrt'){ const a = readArg(); push(`<span class="rt"><span class="sg">${SVG_RAD}</span><span class="rd"><span>${texToHtml(a)}</span></span></span>`, 'atom'); continue; }
+      if(cmd === 'int' || cmd === 'iint'){ const [lo, hi] = readLims(); push(`<span class="itg"><span class="ig">${cmd === 'int' ? '∫' : '∬'}</span>${limsHtml(lo, hi)}</span>`, 'open'); continue; }
+      if(cmd === 'ev'){ const a = readArg(); const [lo, hi] = readLims(); push(`<span class="ev"><span class="evb"><span>${texToHtml(a)}</span></span>${limsHtml(lo, hi)}</span>`, 'atom'); continue; }
+      if(cmd === 'sis'){ const filas = splitTop(readArg(), '\\\\'); push(`<span class="sis"><span class="llave-w">${SVG_LLAVE}</span><span class="sis-l">${filas.map(f => `<span class="sis-r">${texToHtml(f)}</span>`).join('')}</span></span>`, 'atom'); continue; }
+      if(cmd === 'text'){ const a = readArg(); push('<span class="tx">' + a.replace(/[<>&]/g, esc) + '</span>', 'atom'); continue; }
+      if(cmd === 'dd'){ push('&thinsp;<span class="op">d</span>', 'open'); continue; }
+      if(cmd === 'left'){ const d = s[i]; i++; let depth = 1, j2 = i; while(j2 < s.length){ if(s.startsWith('\\left', j2)) depth++; if(s.startsWith('\\right', j2)){ depth--; if(depth === 0) break; } j2++; }
+        const inner = s.slice(i, j2); i = j2 + 6; const dr = s[i]; i++;
+        push(`<span class="par"><span class="pl">${d === '.' ? '' : d}</span><span class="pc">${texToHtml(inner)}</span><span class="pr">${dr === '.' ? '' : dr}</span></span>`, 'atom'); continue; }
+      if(TEX_OPS.includes(cmd)){ push((last === 'atom' ? '&thinsp;' : '') + '<span class="op">' + cmd + '</span>&thinsp;', 'atom'); continue; }
+      if(TEX_SYM[cmd] !== undefined){ const v = TEX_SYM[cmd]; push(v, v.startsWith(' ') ? 'op' : 'atom'); continue; }
+      push(cmd, 'atom'); continue;
+    }
+    i++;
+    if(/[a-zA-Z]/.test(c)){ push('<i>' + c + '</i>', 'atom'); continue; }
+    if(/[0-9.]/.test(c)){ push(c, 'atom'); continue; }
+    if(c === '-'){ if(last === 'atom') push(' −&nbsp;', 'op'); else push('−', 'open'); continue; }
+    if(c === '+'){ if(last === 'atom') push(' +&nbsp;', 'op'); else push('+', 'open'); continue; }
+    if(c === '='){ push(' =&nbsp;', 'op'); continue; }
+    if(c === '<' || c === '>'){ push(' ' + esc(c) + ' ', 'op'); continue; }
+    if(c === '(' || c === '['){ push(c, 'open'); continue; }
+    if(c === ')' || c === ']' || c === '|'){ push(c, 'atom'); continue; }
+    if(c === ','){ push(',', last === 'atom' ? 'atom' : 'open'); continue; }
+    if(c === ';'){ push('&thinsp;;&thinsp;', 'open'); continue; }
+    if(c === ':'){ push(' : ', 'op'); continue; }
+    push(esc(c), 'atom');
+  }
+  return out;
+}
+const mi = t => `<span class="mi">${texToHtml(t)}</span>`;
+const md = t => `<span class="md">${texToHtml(t)}</span>`;
+function renderMath(root){
+  root = root || document.body;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.parentElement && !['SCRIPT','STYLE','TEXTAREA'].includes(n.parentElement.tagName) && /\\[\(\[]/.test(n.textContent)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+  const nodos = []; let n; while((n = walker.nextNode())) nodos.push(n);
+  for(const nodo of nodos){
+    const txt = nodo.textContent; const re = /\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g;
+    let m, lastIdx = 0; const frag = document.createDocumentFragment();
+    while((m = re.exec(txt))){
+      if(m.index > lastIdx) frag.appendChild(document.createTextNode(txt.slice(lastIdx, m.index)));
+      const span = document.createElement('span');
+      if(m[1] !== undefined){ span.className = 'md'; span.innerHTML = texToHtml(m[1]); } else { span.className = 'mi'; span.innerHTML = texToHtml(m[2]); }
+      frag.appendChild(span); lastIdx = m.index + m[0].length;
+    }
+    if(lastIdx < txt.length) frag.appendChild(document.createTextNode(txt.slice(lastIdx)));
+    nodo.parentNode.replaceChild(frag, nodo);
+  }
+}
+
+/* ================= canvas: utilidades ================= */
+const COL = { borde:'#1d4f91', reg:'rgba(29,111,204,.15)', fr:'#7c3aed', entra:'#15803d', sale:'#b45309', punto:'#0f172a', curva:'#ea580c', area:'rgba(234,88,12,.16)' };
+function prepararCanvas(cv, alto){
+  const dpr = window.devicePixelRatio || 1; const h = alto;
+  const w = cv.clientWidth || cv.parentElement.clientWidth || 480;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); cv.style.height = h+'px';
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+  return {ctx,w,h};
+}
+function marcas(a,b,n=5){ const paso0 = (b-a)/n; const p10 = 10**Math.floor(Math.log10(paso0)); const paso = [1,2,2.5,5,10].map(k => k*p10).find(k => k >= paso0*0.999); const r = []; for(let v = Math.ceil(a/paso-1e-9)*paso; v <= b+1e-9; v += paso) r.push(Math.abs(v) < 1e-12 ? 0 : v); return r; }
+function dibujarEjes(ctx, geo, etX, etY){
+  const {l,t,w,h,xmin,xmax,ymin,ymax} = geo;
+  const X = x => l + (x-xmin)/(xmax-xmin)*w, Y = y => t + h - (y-ymin)/(ymax-ymin)*h;
+  ctx.strokeStyle = 'rgba(148,163,184,.35)'; ctx.lineWidth = 1; ctx.fillStyle = '#64748b'; ctx.font = '11px Outfit, sans-serif';
+  marcas(xmin,xmax).forEach(v => { ctx.beginPath(); ctx.moveTo(X(v),t); ctx.lineTo(X(v),t+h); ctx.stroke(); ctx.textAlign = 'center'; ctx.fillText(fmt(v,2), X(v), t+h+14); });
+  marcas(ymin,ymax).forEach(v => { ctx.beginPath(); ctx.moveTo(l,Y(v)); ctx.lineTo(l+w,Y(v)); ctx.stroke(); ctx.textAlign = 'right'; ctx.fillText(fmt(v,2), l-5, Y(v)+4); });
+  ctx.strokeStyle = 'rgba(51,65,85,.6)'; ctx.lineWidth = 1.2;
+  if(xmin < 0 && xmax > 0){ ctx.beginPath(); ctx.moveTo(X(0),t); ctx.lineTo(X(0),t+h); ctx.stroke(); }
+  if(ymin < 0 && ymax > 0){ ctx.beginPath(); ctx.moveTo(l,Y(0)); ctx.lineTo(l+w,Y(0)); ctx.stroke(); }
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.2; ctx.strokeRect(l,t,w,h);
+  ctx.fillStyle = '#334155'; ctx.font = 'bold 12px Outfit, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(etX, l+w/2, t+h+30);
+  ctx.save(); ctx.translate(12, t+h/2); ctx.rotate(-Math.PI/2); ctx.fillText(etY, 0, 0); ctx.restore();
+  return {X,Y};
+}
+function etiqueta(ctx, texto, x, y, color, geo){
+  ctx.font = 'bold 12px Outfit, sans-serif'; const wt = ctx.measureText(texto).width;
+  if(geo){ x = clamp(x, geo.l+4, geo.l+geo.w-wt-6); y = clamp(y, geo.t+15, geo.t+geo.h-6); }
+  ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fillRect(x-3,y-12,wt+6,16); ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.fillText(texto,x,y);
+}
+function punto(ctx, x, y, color, r=5){ ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x,y,r+2,0,7); ctx.fill(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+const pasoHTML = (n,t,b,cls) => `<div class="cad-paso ${cls||''}"><span class="cad-n">${n}</span><div><div class="cad-t">${t}</div><div class="cad-c">${b}</div></div></div>`;
+const segOn = (cont, attr, val) => $$('.seg-b', cont).forEach(b => b.classList.toggle('on', b.dataset[attr] === val));
+
+/* ================= TEMA 1 · recintos con franja ================= */
+const REC = {
+  par:{ nombre:'Entre y = x² e y = x + 2', vx:[-1.8,2.8], vy:[-0.7,5.1],
+    curvas:[{f:x=>x*x, et:'y = x²', ex:-1.75}, {f:x=>x+2, et:'y = x + 2', ex:2.25, dy:20}],
+    V:{a:-1,b:2,aT:'-1',bT:'2',lo:x=>x*x,hi:x=>x+2,loT:'x^2',hiT:'x+2',loS:v=>`${v}^2`,hiS:v=>`${v}+2`},
+    H:[{c:0,d:1,cT:'0',dT:'1',lo:y=>-Math.sqrt(y),hi:y=>Math.sqrt(y),loT:R_`-\sqrt{y}`,hiT:R_`\sqrt{y}`,loS:v=>R_`-\sqrt{${v}}`,hiS:v=>R_`\sqrt{${v}}`},
+       {c:1,d:4,cT:'1',dT:'4',lo:y=>y-2,hi:y=>Math.sqrt(y),loT:'y-2',hiT:R_`\sqrt{y}`,loS:v=>`${v}-2`,hiS:v=>R_`\sqrt{${v}}`}],
+    area:4.5, x0:0.5, y0:2.5,
+    notaH:R_`Con franjas horizontales hay que partir el recinto en dos, porque en \(y=1\) el borde izquierdo cambia de curva: debajo es la parábola y arriba, la recta.` },
+  xx:{ nombre:'Entre y = x² e y = x', vx:[-0.25,1.35], vy:[-0.2,1.3],
+    curvas:[{f:x=>x*x, et:'y = x²', ex:1.08, dy:16}, {f:x=>x, et:'y = x', ex:0.72, dy:-14}],
+    V:{a:0,b:1,aT:'0',bT:'1',lo:x=>x*x,hi:x=>x,loT:'x^2',hiT:'x',loS:v=>`${v}^2`,hiS:v=>`${v}`},
+    H:[{c:0,d:1,cT:'0',dT:'1',lo:y=>y,hi:y=>Math.sqrt(y),loT:'y',hiT:R_`\sqrt{y}`,loS:v=>`${v}`,hiS:v=>R_`\sqrt{${v}}`}],
+    area:1/6, x0:0.5, y0:0.25 },
+  tri:{ nombre:'Triángulo: y = x, y = 0, x = 2', vx:[-0.4,2.8], vy:[-0.4,2.6],
+    curvas:[{f:x=>x, et:'y = x', ex:0.9, dy:-16}, {f:x=>0, et:'y = 0', ex:0.6, dy:16}, {xv:2, et:'x = 2', ey:1.1}],
+    V:{a:0,b:2,aT:'0',bT:'2',lo:x=>0,hi:x=>x,loT:'0',hiT:'x',loS:v=>'0',hiS:v=>`${v}`},
+    H:[{c:0,d:2,cT:'0',dT:'2',lo:y=>y,hi:y=>2,loT:'y',hiT:'2',loS:v=>`${v}`,hiS:v=>'2'}],
+    area:2, x0:1.5, y0:0.5 }
+};
+function piezaH(m, y){ return m.H.find(p => y <= p.d + 1e-9) || m.H[m.H.length-1]; }
+function calcFranja(m, modo, t){ const p = modo === 'V' ? m.V : piezaH(m, t); const lo = p.lo(t), hi = p.hi(t); return { p, t, lo, hi, largo: hi-lo }; }
+function crearRecinto(id){
+  const cont = $(id); const st = { k:'par', modo:'V', t:REC.par.x0 };
+  cont.innerHTML = `<div class="ex-grid"><div class="ex-col">
+      <div class="seg-t">Recinto</div><div class="seg" id="${id}-rec">${Object.entries(REC).map(([k,v]) => `<button class="seg-b" data-k="${k}">${v.nombre}</button>`).join('')}</div>
+      <div class="seg-t">Franjas</div><div class="seg" id="${id}-modo"><button class="seg-b" data-m="V">Verticales</button><button class="seg-b" data-m="H">Horizontales</button></div>
+      <canvas id="${id}-cv" class="c2d" role="img" aria-label="recinto con una franja que lo recorre"></canvas>
+      <div class="leyenda"><span style="--c:${COL.fr}">franja</span><span style="--c:${COL.entra}">por dónde entra</span><span style="--c:${COL.sale}">por dónde sale</span></div>
+    </div><div class="ex-col">
+      <div class="ctrl"><label><span class="lv"><span id="${id}-lt"></span><span class="val" id="${id}-vt"></span></span><input type="range" id="${id}-sl" step="0.05" aria-label="posición de la franja"></label></div>
+      <div id="${id}-lect"></div><div id="${id}-interp" class="interp"></div>
+    </div></div>`;
+  const sl = $(`${id}-sl`);
+  function rango(){ const m = REC[st.k]; return st.modo === 'V' ? [m.V.a, m.V.b] : [m.H[0].c, m.H[m.H.length-1].d]; }
+  function configurar(reset){ const m = REC[st.k]; const [a,b] = rango(); sl.min = a; sl.max = b; if(reset) st.t = st.modo === 'V' ? m.x0 : m.y0; st.t = clamp(st.t, a, b);
+    segOn($(`${id}-rec`), 'k', st.k); segOn($(`${id}-modo`), 'm', st.modo); refrescar(); }
+  function refrescar(){
+    const m = REC[st.k]; sl.value = st.t; const fij = st.modo === 'V' ? 'x' : 'y', mov = st.modo === 'V' ? 'y' : 'x';
+    $(`${id}-lt`).innerHTML = `Franja en ${mi(fij)}`; $(`${id}-vt`).textContent = fmt(st.t,2);
+    const c = calcFranja(m, st.modo, st.t);
+    /* dibujo */
+    const cv = $(`${id}-cv`); const {ctx,w,h} = prepararCanvas(cv, 320); const geo = {l:44,t:12,w:w-44-12,h:h-12-42,xmin:m.vx[0],xmax:m.vx[1],ymin:m.vy[0],ymax:m.vy[1]};
+    const {X,Y} = dibujarEjes(ctx, geo, 'x', 'y');
+    ctx.save(); ctx.beginPath(); ctx.rect(geo.l,geo.t,geo.w,geo.h); ctx.clip();
+    const xs = lin(120, m.V.a, m.V.b); ctx.fillStyle = COL.reg; ctx.beginPath(); xs.forEach((x,i) => { i ? ctx.lineTo(X(x),Y(m.V.lo(x))) : ctx.moveTo(X(x),Y(m.V.lo(x))); }); xs.slice().reverse().forEach(x => ctx.lineTo(X(x),Y(m.V.hi(x)))); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = COL.borde; ctx.lineWidth = 2.4;
+    m.curvas.forEach(cu => { ctx.beginPath(); if(cu.f){ lin(160, geo.xmin, geo.xmax).forEach((x,i) => { i ? ctx.lineTo(X(x),Y(cu.f(x))) : ctx.moveTo(X(x),Y(cu.f(x))); }); } else { ctx.moveTo(X(cu.xv),geo.t); ctx.lineTo(X(cu.xv),geo.t+geo.h); } ctx.stroke(); });
+    let p1, p2; if(st.modo === 'V'){ p1 = [X(st.t),Y(c.lo)]; p2 = [X(st.t),Y(c.hi)]; } else { p1 = [X(c.lo),Y(st.t)]; p2 = [X(c.hi),Y(st.t)]; }
+    ctx.strokeStyle = COL.fr; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.stroke(); ctx.lineCap = 'butt';
+    punto(ctx, p1[0], p1[1], COL.entra); punto(ctx, p2[0], p2[1], COL.sale);
+    ctx.restore();
+    m.curvas.forEach(cu => { if(cu.f) etiqueta(ctx, cu.et, X(cu.ex)+4, Y(cu.f(cu.ex))+(cu.dy||0), COL.borde, geo); else etiqueta(ctx, cu.et, X(cu.xv)+6, Y(cu.ey), COL.borde, geo); });
+    /* panel */
+    const tv = pv(st.t), p = c.p; let hh = '<div class="cadena">';
+    hh += pasoHTML(1, 'La franja', st.modo === 'V' ? `Vertical, en ${mi('x=' + n6(st.t))}: ${mi('x')} queda fija y se mueve ${mi('y')}.` : `Horizontal, en ${mi('y=' + n6(st.t))}: ${mi('y')} queda fija y se mueve ${mi('x')}.`);
+    hh += pasoHTML(2, st.modo === 'V' ? 'Por dónde entra: el piso' : 'Por dónde entra: el borde izquierdo', mi(mov + '=' + cad([p.loT, p.loS(tv)], c.lo)), 'cx');
+    hh += pasoHTML(3, st.modo === 'V' ? 'Por dónde sale: el techo' : 'Por dónde sale: el borde derecho', mi(mov + '=' + cad([p.hiT, p.hiS(tv)], c.hi)), 'cy');
+    const lr = nv(c.lo)[1], hr = nv(c.hi)[1];
+    const r4 = v => exacto6(v) ? v : Math.round(v*1e4)/1e4; const largoM = r4(c.hi) - r4(c.lo);
+    hh += pasoHTML(4, 'Largo de la franja', `sale − entra: ${mi(`${hr}-${c.lo < 0 ? '(' + lr + ')' : lr}` + ((exacto6(c.hi) && exacto6(c.lo)) ? '=' : R_`\approx`) + n6(largoM))}`);
+    let desc;
+    if(st.modo === 'V') desc = md(R_`R:\sis{${m.V.aT}\le x\le ${m.V.bT} \\ ${m.V.loT}\le y\le ${m.V.hiT}}`);
+    else if(m.H.length === 1) desc = md(R_`R:\sis{${m.H[0].cT}\le y\le ${m.H[0].dT} \\ ${m.H[0].loT}\le x\le ${m.H[0].hiT}}`);
+    else desc = m.H.map((q,k) => `<div class="cad-paso ${q === p ? 'act' : ''}" style="background:#fff;margin-top:6px"><div>${md(R_`R_${k+1}:\sis{${q.cT}\le y\le ${q.dT} \\ ${q.loT}\le x\le ${q.hiT}}`)}</div></div>`).join('');
+    hh += pasoHTML(5, 'El recinto completo', desc, 'res');
+    hh += '</div>'; $(`${id}-lect`).innerHTML = hh;
+    let txt = `Sumando los largos de todas las franjas se obtiene el área del recinto: ${fmt(m.area,4)}${exacto6(m.area) ? '' : ' (redondeado)'}, con franjas verticales o con horizontales.`;
+    if(st.modo === 'H' && m.H.length > 1) txt = m.notaH + ' ' + txt;
+    $(`${id}-interp`).innerHTML = txt; renderMath($(`${id}-interp`));
+  }
+  $(`${id}-rec`).addEventListener('click', ev => { const b = ev.target.closest('.seg-b'); if(!b) return; st.k = b.dataset.k; configurar(true); });
+  $(`${id}-modo`).addEventListener('click', ev => { const b = ev.target.closest('.seg-b'); if(!b) return; st.modo = b.dataset.m; configurar(true); });
+  sl.addEventListener('input', e => { st.t = Math.round(parseFloat(e.target.value)*20)/20; refrescar(); });
+  configurar(true);
+  return { redibujar: refrescar, set:(k,modo,t) => { st.k = k; st.modo = modo; configurar(true); st.t = t; refrescar(); } };
+}
+
+/* ================= TEMA 2 · la integral de adentro, franja por franja ================= */
+const ITG = {
+  rect:{ nombre:'x + 2y sobre un rectángulo', fT:'x+2y', a:0, b:2, aT:'0', bT:'2', vx:[-0.3,2.4], vy:[-0.3,1.5],
+    lo:x=>0, hi:x=>1, loT:'0', hiT:'1', loS:v=>'0', hiS:v=>'1',
+    f:(x,y)=>x+2*y, F:(x,y)=>x*y+y*y, FT:R_`x\cdot y+y^2`,
+    FS:(xv,yv,x,y)=>[R_`${xv}\cdot${yv}+${yv}^2`, `${n6(x*y)}+${n6(y*y)}`],
+    G:x=>x+1, I:4, x0:0.5,
+    afuera:[R_`\int_0^2(x+1)\dd x=\ev{\frac{x^2}{2}+x}_0^2=\left(\frac{2^2}{2}+2\right)-\left(\frac{0^2}{2}+0\right)`, R_`=(2+2)-0=4`] },
+  xy:{ nombre:'x · y entre y = x² e y = x', fT:R_`x\cdot y`, a:0, b:1, aT:'0', bT:'1', vx:[-0.2,1.3], vy:[-0.2,1.3],
+    lo:x=>x*x, hi:x=>x, loT:'x^2', hiT:'x', loS:v=>`${v}^2`, hiS:v=>`${v}`,
+    f:(x,y)=>x*y, F:(x,y)=>x*y*y/2, FT:R_`\frac{x\cdot y^2}{2}`,
+    FS:(xv,yv,x,y)=>[R_`\frac{${xv}\cdot${yv}^2}{2}`, R_`\frac{${xv}\cdot${n6(y*y)}}{2}`, R_`\frac{${n6(x*y*y)}}{2}`],
+    G:x=>x**3/2-x**5/2, I:1/24, x0:0.5,
+    afuera:[R_`\int_0^1\left(\frac{x^3}{2}-\frac{x^5}{2}\right)\dd x=\ev{\frac{x^4}{8}-\frac{x^6}{12}}_0^1=\left(\frac{1^4}{8}-\frac{1^6}{12}\right)-\left(\frac{0^4}{8}-\frac{0^6}{12}\right)`, R_`=\frac{1}{8}-\frac{1}{12}-0=\frac{3}{24}-\frac{2}{24}=\frac{1}{24}`] },
+  tri:{ nombre:'2y sobre el triángulo 0 ≤ y ≤ x, 0 ≤ x ≤ 2', fT:'2y', a:0, b:2, aT:'0', bT:'2', vx:[-0.3,2.5], vy:[-0.3,2.4],
+    lo:x=>0, hi:x=>x, loT:'0', hiT:'x', loS:v=>'0', hiS:v=>`${v}`,
+    f:(x,y)=>2*y, F:(x,y)=>y*y, FT:'y^2',
+    FS:(xv,yv,x,y)=>[`${yv}^2`],
+    G:x=>x*x, I:8/3, x0:1.5,
+    afuera:[R_`\int_0^2 x^2\dd x=\ev{\frac{x^3}{3}}_0^2=\frac{2^3}{3}-\frac{0^3}{3}=\frac{8}{3}-0=\frac{8}{3}`] }
+};
+function calcTajada(m, x){ const lo = m.lo(x), hi = m.hi(x); const Fh = m.F(x,hi), Fl = m.F(x,lo); return { x, lo, hi, Fh, Fl, g: Fh-Fl }; }
+function crearTajadas(id){
+  const cont = $(id); const st = { k:'rect', x:ITG.rect.x0 };
+  cont.innerHTML = `<div class="ex-grid"><div class="ex-col">
+      <div class="seg-t">Función y recinto</div><div class="seg" id="${id}-mod">${Object.entries(ITG).map(([k,v]) => `<button class="seg-b" data-k="${k}">${v.nombre}</button>`).join('')}</div>
+      <canvas id="${id}-cv" class="c2d" role="img" aria-label="recinto de integración con la franja elegida"></canvas>
+      <canvas id="${id}-g" class="c2d" role="img" aria-label="resultado de la integral de adentro para cada franja"></canvas>
+      <div class="leyenda"><span style="--c:${COL.fr}">franja</span><span style="--c:${COL.curva}">resultado de cada franja</span></div>
+    </div><div class="ex-col">
+      <div class="ctrl"><label><span class="lv"><span>Franja en ${mi('x')}</span><span class="val" id="${id}-vt"></span></span><input type="range" id="${id}-sl" step="0.1" aria-label="posición de la franja"></label></div>
+      <div id="${id}-plant" class="box def" style="margin:0"></div>
+      <div id="${id}-lect"></div>
+      <div id="${id}-afuera" class="box okb" style="margin:0"></div>
+    </div></div>`;
+  const sl = $(`${id}-sl`);
+  function configurar(){ const m = ITG[st.k]; sl.min = m.a; sl.max = m.b; st.x = m.x0; segOn($(`${id}-mod`), 'k', st.k);
+    $(`${id}-plant`).innerHTML = `<span class="bt">La integral</span>` + md(R_`\int_{${m.aT}}^{${m.bT}}\left[\int_{${m.loT}}^{${m.hiT}}(${m.fT})\dd y\right]\dd x`);
+    $(`${id}-afuera`).innerHTML = `<span class="bt">La integral de afuera: junta todas las franjas</span>` + m.afuera.map(md).join('');
+    refrescar(); }
+  function refrescar(){
+    const m = ITG[st.k]; sl.value = st.x; $(`${id}-vt`).textContent = fmt(st.x,1); const c = calcTajada(m, st.x);
+    /* recinto */
+    let cv = $(`${id}-cv`); let {ctx,w,h} = prepararCanvas(cv, 230); let geo = {l:44,t:12,w:w-44-12,h:h-12-42,xmin:m.vx[0],xmax:m.vx[1],ymin:m.vy[0],ymax:m.vy[1]};
+    let {X,Y} = dibujarEjes(ctx, geo, 'x', 'y');
+    ctx.save(); ctx.beginPath(); ctx.rect(geo.l,geo.t,geo.w,geo.h); ctx.clip();
+    const xs = lin(100, m.a, m.b); ctx.fillStyle = COL.reg; ctx.strokeStyle = COL.borde; ctx.lineWidth = 2.2; ctx.beginPath(); xs.forEach((x,i) => { i ? ctx.lineTo(X(x),Y(m.lo(x))) : ctx.moveTo(X(x),Y(m.lo(x))); }); xs.slice().reverse().forEach(x => ctx.lineTo(X(x),Y(m.hi(x)))); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = COL.fr; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(X(c.x),Y(c.lo)); ctx.lineTo(X(c.x),Y(c.hi)); ctx.stroke(); ctx.lineCap = 'butt';
+    punto(ctx, X(c.x), Y(c.lo), COL.entra); punto(ctx, X(c.x), Y(c.hi), COL.sale); ctx.restore();
+    /* resultados de las franjas */
+    cv = $(`${id}-g`); ({ctx,w,h} = prepararCanvas(cv, 200)); const gs = xs.map(m.G); const gmax = Math.max(...gs)*1.18;
+    geo = {l:52,t:12,w:w-52-12,h:h-12-42,xmin:m.vx[0],xmax:m.vx[1],ymin:-gmax*0.08,ymax:gmax};
+    ({X,Y} = dibujarEjes(ctx, geo, 'x', 'resultado de la franja'));
+    ctx.save(); ctx.beginPath(); ctx.rect(geo.l,geo.t,geo.w,geo.h); ctx.clip();
+    ctx.fillStyle = COL.area; ctx.beginPath(); ctx.moveTo(X(m.a),Y(0)); xs.forEach((x,i) => ctx.lineTo(X(x),Y(gs[i]))); ctx.lineTo(X(m.b),Y(0)); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = COL.curva; ctx.lineWidth = 2.6; ctx.beginPath(); xs.forEach((x,i) => { i ? ctx.lineTo(X(x),Y(gs[i])) : ctx.moveTo(X(x),Y(gs[i])); }); ctx.stroke();
+    ctx.strokeStyle = COL.fr; ctx.lineWidth = 2; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(X(c.x),Y(0)); ctx.lineTo(X(c.x),Y(c.g)); ctx.stroke(); ctx.setLineDash([]);
+    punto(ctx, X(c.x), Y(c.g), COL.punto); ctx.restore();
+    etiqueta(ctx, `área bajo la curva${exacto6(m.I) ? ': ' : ' ≈ '}${fmt(m.I,4)}`, geo.l+8, geo.t+16, COL.curva, geo);
+    /* panel */
+    const xv = pv(c.x), lr = nv(c.lo)[1], hr = nv(c.hi)[1]; let hh = '<div class="cadena">';
+    hh += pasoHTML(1, 'La franja', `En ${mi('x=' + n6(c.x))}, ${mi('y')} va desde ${mi(cad([m.loT, m.loS(xv)], c.lo))} hasta ${mi(cad([m.hiT, m.hiS(xv)], c.hi))}.`);
+    hh += pasoHTML(2, `Primitiva respecto de ${mi('y')}, con ${mi('x')} fija`, `Una primitiva de ${mi(m.fT)} es ${mi(m.FT)}.`);
+    hh += pasoHTML(3, `En el techo, ${mi('y=' + hr)}`, mi(cad([m.FT, ...m.FS(xv, hr, c.x, c.hi)], c.Fh)), 'cy');
+    hh += pasoHTML(4, `En el piso, ${mi('y=' + lr)}`, mi(cad([m.FT, ...m.FS(xv, lr, c.x, c.lo)], c.Fl)), 'cx');
+    hh += pasoHTML(5, 'Resultado de esta franja', `techo − piso: ${mi(cad([`${nv(c.Fh)[1]}-${nv(c.Fl)[1]}`], c.g))}`, 'res');
+    hh += '</div>'; $(`${id}-lect`).innerHTML = hh;
+  }
+  $(`${id}-mod`).addEventListener('click', ev => { const b = ev.target.closest('.seg-b'); if(!b) return; st.k = b.dataset.k; configurar(); });
+  sl.addEventListener('input', e => { st.x = Math.round(parseFloat(e.target.value)*10)/10; refrescar(); });
+  configurar();
+  return { redibujar: refrescar, set:(k,x) => { st.k = k; configurar(); st.x = x; refrescar(); } };
+}
+
+/* ================= TEMA 3 · el volumen, columna por columna ================= */
+const NCOL = [1,2,4,5,10,20];
+const SOL = {
+  par4:{ nombre:'z = 4 − x² − y²', fT:'4-x^2-y^2', a:0, b:1, c:0, d:1, zmax:4, f:(x,y)=>4-x*x-y*y,
+    fS:(xv,yv,x,y)=>[`4-${xv}^2-${yv}^2`, `4-${n6(x*x)}-${n6(y*y)}`], V:10/3, VT:R_`\frac{10}{3}`,
+    cuenta:null, nota:'Con más columnas, la suma se acerca al valor exacto. La cuenta exacta es la del ejemplo 1.' },
+  x2y:{ nombre:'z = x² + y', fT:'x^2+y', a:0, b:2, c:0, d:1, zmax:5, f:(x,y)=>x*x+y,
+    fS:(xv,yv,x,y)=>[`${xv}^2+${yv}`, `${n6(x*x)}+${yv}`], V:11/3, VT:R_`\frac{11}{3}`,
+    cuenta:[R_`\int_0^1(x^2+y)\dd y=\ev{x^2\cdot y+\frac{y^2}{2}}_0^1=\left(x^2\cdot1+\frac{1^2}{2}\right)-\left(x^2\cdot0+\frac{0^2}{2}\right)=x^2+\frac{1}{2}`,
+      R_`V=\int_0^2\left(x^2+\frac{1}{2}\right)\dd x=\ev{\frac{x^3}{3}+\frac{x}{2}}_0^2=\left(\frac{2^3}{3}+\frac{2}{2}\right)-\left(\frac{0^3}{3}+\frac{0}{2}\right)`, R_`=\frac{8}{3}+1-0=\frac{8}{3}+\frac{3}{3}=\frac{11}{3}`],
+    nota:'Con más columnas, la suma se acerca al valor exacto.' },
+  plano:{ nombre:'z = 6 − x − 2y', fT:'6-x-2y', a:0, b:2, c:0, d:1, zmax:6, f:(x,y)=>6-x-2*y,
+    fS:(xv,yv,x,y)=>[R_`6-${xv}-2\cdot${yv}`, `6-${xv}-${n6(2*y)}`], V:8, VT:'8',
+    cuenta:[R_`\int_0^1(6-x-2y)\dd y=\ev{6y-x\cdot y-y^2}_0^1=\left(6\cdot1-x\cdot1-1^2\right)-\left(6\cdot0-x\cdot0-0^2\right)`, R_`=6-x-1-0=5-x`,
+      R_`V=\int_0^2(5-x)\dd x=\ev{5x-\frac{x^2}{2}}_0^2=\left(5\cdot2-\frac{2^2}{2}\right)-\left(5\cdot0-\frac{0^2}{2}\right)=10-2-0=8`],
+    nota:'El techo es un plano: en cada columna, lo que sobra de un lado del centro compensa lo que falta del otro. Por eso la suma da el valor exacto con cualquier cantidad de columnas.' },
+  uno:{ nombre:'z = 1 (altura 1)', fT:'1', a:0, b:2, c:0, d:1, zmax:2.5, f:(x,y)=>1,
+    fS:()=>[], V:2, VT:'2',
+    cuenta:[R_`\int_0^1 1\dd y=\ev{y}_0^1=1-0=1`, R_`V=\int_0^2 1\dd x=\ev{x}_0^2=2-0=2`],
+    nota:'Con altura 1, cada columna mide lo mismo que su base: la suma es el área del piso, 2 · 1 = 2.' }
+};
+function calcColumnas(m, n){ const dx = (m.b-m.a)/n, dy = (m.d-m.c)/n; let s = 0; const hs = [];
+  for(let i = 0; i < n; i++){ hs.push([]); for(let j = 0; j < n; j++){ const hgt = m.f(m.a+(i+0.5)*dx, m.c+(j+0.5)*dy); hs[i].push(hgt); s += hgt*dx*dy; } }
+  const im = Math.floor(n/2), jm = Math.floor(n/2); const xc = m.a+(im+0.5)*dx, yc = m.c+(jm+0.5)*dy;
+  return { n, dx, dy, dA:dx*dy, suma:s, hs, im, jm, xc, yc, hc:m.f(xc,yc) }; }
+function crearColumnas(id){
+  const cont = $(id); const st = { k:'par4', ni:2 };
+  cont.innerHTML = `<div class="ex-grid"><div class="ex-col">
+      <div class="seg-t">Techo</div><div class="seg" id="${id}-mod">${Object.entries(SOL).map(([k,v]) => `<button class="seg-b" data-k="${k}">${v.nombre}</button>`).join('')}</div>
+      <canvas id="${id}-cv" class="c2d" role="img" aria-label="sólido aproximado con columnas"></canvas>
+      <div class="leyenda"><span style="--c:#1d6fcc">columnas</span><span style="--c:${COL.curva}">columna marcada</span><span style="--c:#0f2244">techo verdadero</span></div>
+    </div><div class="ex-col">
+      <div class="ctrl"><label><span class="lv"><span>Columnas por lado, ${mi('n')}</span><span class="val" id="${id}-vn"></span></span><input type="range" id="${id}-sl" min="0" max="${NCOL.length-1}" step="1" aria-label="cantidad de columnas por lado"></label></div>
+      <div id="${id}-lect"></div><div id="${id}-interp" class="interp"></div><div id="${id}-cuenta"></div>
+    </div></div>`;
+  const sl = $(`${id}-sl`);
+  function configurar(){ const m = SOL[st.k]; segOn($(`${id}-mod`), 'k', st.k);
+    $(`${id}-cuenta`).innerHTML = m.cuenta ? `<div class="acc"><div class="acc-h" tabindex="0"><span class="acc-t">Ver la cuenta exacta</span><span class="chev">▼</span></div><div class="acc-b">${md(R_`V=\int_{${m.a}}^{${m.b}}\int_{${m.c}}^{${m.d}}(${m.fT})\dd y\dd x`)}${m.cuenta.map(md).join('')}</div></div>` : '';
+    refrescar(); }
+  function refrescar(){
+    const m = SOL[st.k]; const n = NCOL[st.ni]; sl.value = st.ni; $(`${id}-vn`).textContent = `${n} (${n*n} ${n*n === 1 ? 'columna' : 'columnas'})`;
+    const c = calcColumnas(m, n);
+    const cv = $(`${id}-cv`); const {ctx,w,h} = prepararCanvas(cv, 340);
+    const wx = Math.min(w*0.36, 175), wy = wx*0.4, sz = (h-52-2*wy)/m.zmax, ox = w/2 + 14, Y0 = 22 + m.zmax*sz;
+    const P = (u,v,z) => [ox + (u-v)*wx, Y0 + (u+v)*wy - z*sz];
+    const cara = (pts, fill, stroke) => { ctx.beginPath(); pts.forEach((p,i) => i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); } };
+    /* piso */
+    cara([P(0,0,0),P(1,0,0),P(1,1,0),P(0,1,0)], '#eef4fb', '#94a3b8');
+    /* eje z */
+    const zx = ox - wx - 10; ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(zx, Y0+wy); ctx.lineTo(zx, Y0+wy-m.zmax*sz); ctx.stroke();
+    ctx.fillStyle = '#64748b'; ctx.font = '11px Outfit, sans-serif'; ctx.textAlign = 'right';
+    marcas(0, m.zmax, 4).forEach(z => { const yy = Y0+wy-z*sz; ctx.beginPath(); ctx.moveTo(zx-4,yy); ctx.lineTo(zx,yy); ctx.stroke(); ctx.fillText(fmt(z,2), zx-7, yy+4); });
+    ctx.font = 'bold 12px Outfit, sans-serif'; ctx.fillStyle = '#334155'; ctx.textAlign = 'center'; ctx.fillText('z', zx, Y0+wy-m.zmax*sz-6);
+    /* columnas, de atrás hacia adelante */
+    const orden = []; for(let i = 0; i < n; i++) for(let j = 0; j < n; j++) orden.push([i,j]); orden.sort((p,q) => (p[0]+p[1]) - (q[0]+q[1]));
+    const borde = n <= 10 ? 'rgba(255,255,255,.85)' : null;
+    orden.forEach(([i,j]) => { const u0 = i/n, u1 = (i+1)/n, v0 = j/n, v1 = (j+1)/n, z = c.hs[i][j]; const marc = (i === c.im && j === c.jm);
+      const t = clamp(z/m.zmax, 0, 1); const base = marc ? [234,88,12] : [29+Math.round(70*t), 111+Math.round(70*t), 204+Math.round(30*t)];
+      const tono = k => `rgb(${base.map(v => Math.round(v*k)).join(',')})`;
+      cara([P(u1,v0,0),P(u1,v1,0),P(u1,v1,z),P(u1,v0,z)], tono(0.78), borde);
+      cara([P(u0,v1,0),P(u1,v1,0),P(u1,v1,z),P(u0,v1,z)], tono(0.62), borde);
+      cara([P(u0,v0,z),P(u1,v0,z),P(u1,v1,z),P(u0,v1,z)], tono(1), borde); });
+    /* techo verdadero */
+    ctx.strokeStyle = 'rgba(15,34,68,.6)'; ctx.lineWidth = 1.1; const fz = (u,v) => m.f(m.a+u*(m.b-m.a), m.c+v*(m.d-m.c));
+    for(let k = 0; k <= 6; k++){ const q = k/6; ctx.beginPath(); lin(25,0,1).forEach((s,i) => { const p = P(q,s,fz(q,s)); i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1]); }); ctx.stroke(); ctx.beginPath(); lin(25,0,1).forEach((s,i) => { const p = P(s,q,fz(s,q)); i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1]); }); ctx.stroke(); }
+    /* rótulos del piso */
+    ctx.font = '12px Outfit, sans-serif'; ctx.fillStyle = '#334155';
+    let p = P(1,1,0); ctx.textAlign = 'center'; ctx.fillText(`(${fmt(m.b)} ; ${fmt(m.d)})`, p[0], p[1]+16);
+    p = P(1,0,0); ctx.textAlign = 'left'; ctx.fillText(`(${fmt(m.b)} ; ${fmt(m.c)})`, Math.min(p[0]+6, w-52), p[1]+14);
+    p = P(0,1,0); ctx.textAlign = 'left'; ctx.fillText(`(${fmt(m.a)} ; ${fmt(m.d)})`, Math.max(p[0]-30, 4), p[1]+24);
+    ctx.fillStyle = '#64748b'; ctx.font = '11px Outfit, sans-serif'; ctx.textAlign = 'right'; ctx.fillText('esquinas del piso: (x ; y)', w-8, h-8);
+    /* panel */
+    let hh = '<div class="cadena">';
+    hh += pasoHTML(1, n === 1 ? 'El piso, un solo rectángulo' : `El piso, en ${n} × ${n} rectángulos`, mi(R_`\Delta x=\frac{${m.b}-${m.a}}{${n}}=\frac{${m.b-m.a}}{${n}}` + nv(c.dx).join('')) + '<br>' + mi(R_`\Delta y=\frac{${m.d}-${m.c}}{${n}}=\frac{${m.d-m.c}}{${n}}` + nv(c.dy).join('')) + '<br>' + mi(R_`\Delta A=\Delta x\cdot\Delta y=${nv(c.dx)[1]}\cdot${nv(c.dy)[1]}` + nv(c.dA).join('')));
+    hh += pasoHTML(2, 'La columna marcada', `Centro de su base: ${mi(`(x;y)=(${n6(c.xc)};${n6(c.yc)})`)}.<br>Altura: ${mi('z=' + cad([m.fT, ...m.fS(pv(c.xc), pv(c.yc), c.xc, c.yc)], c.hc))}.<br>Volumen: ${mi(R_`z\cdot\Delta A=${nv(c.hc)[1]}\cdot${nv(c.dA)[1]}` + nv(c.hc*c.dA).join(''))}.`, 'cy');
+    hh += pasoHTML(3, n === 1 ? 'Una sola columna' : `Suma de las ${n*n} columnas`, n === 1 ? `La suma es el volumen de esa columna: <strong>${exacto6(c.suma) ? '' : '≈ '}${fmt(c.suma, exacto6(c.suma) ? 6 : 4)}</strong>.` : `Sumando el volumen de todas: <strong>${exacto6(c.suma) ? '' : '≈ '}${fmt(c.suma, exacto6(c.suma) ? 6 : 4)}</strong>.`);
+    const dif = Math.abs(c.suma - m.V);
+    hh += pasoHTML(4, 'Valor exacto de la integral doble', `${mi('V=' + m.VT + (exacto6(m.V) ? '' : R_`\approx` + fmtL(m.V,4)))}. Diferencia con la suma: <strong>${dif < 5e-7 ? '0' : '≈ ' + fmt(dif,4)}</strong>.`, 'res');
+    hh += '</div>'; $(`${id}-lect`).innerHTML = hh;
+    $(`${id}-interp`).textContent = m.nota;
+  }
+  $(`${id}-mod`).addEventListener('click', ev => { const b = ev.target.closest('.seg-b'); if(!b) return; st.k = b.dataset.k; configurar(); });
+  sl.addEventListener('input', e => { st.ni = +e.target.value; refrescar(); });
+  configurar();
+  return { redibujar: refrescar, set:(k,ni) => { st.k = k; st.ni = ni; configurar(); } };
+}
+
+/* ================= ejercicios ================= */
+const EJ = {};
+function rotar(e){ if(e.tipo !== 'mc' || e._rot !== undefined) return; let h = 0; for(const ch of e.id) h = (h*31 + ch.charCodeAt(0)) % 1000003; const n = e.opciones.length, r = e.rot !== undefined ? e.rot : h % n; e._rot = r; e.opciones = e.opciones.slice(r).concat(e.opciones.slice(0,r)); e.correcta = (e.correcta - r + n) % n; }
+function ejHTML(e){
+  rotar(e); EJ[e.id] = e; const st = E.ejercicios[e.id] || {ok:false,intentos:0}; let inter = '';
+  if(e.tipo === 'mc') inter = `<div class="opts">${e.opciones.map((o,j) => `<button class="opt" data-ej="${e.id}" data-j="${j}" ${st.ok ? 'disabled' : ''}><span class="k">${'ABCDE'[j]}</span><span>${o}</span></button>`).join('')}</div>`;
+  else inter = `<div class="numin">${e.campos.map((c,j) => `<span class="lb">${c.et}</span><input type="text" inputmode="text" autocomplete="off" id="${e.id}-in${j}" aria-label="${c.nombre}" ${st.ok ? 'disabled' : ''}>`).join('')}<button class="btn sm primary" data-num="${e.id}" ${st.ok ? 'disabled' : ''}>Comprobar</button></div>`;
+  const hab = st.ok || st.intentos > 0;
+  return `<div class="q" id="card-${e.id}"><div class="qn"><span class="k">${e.et}</span><span class="enq">${e.enunciado}</span>${st.ok ? '<span class="badge ok">✔ resuelto</span>' : ''}</div>${inter}
+    <div class="fb ${st.ok ? 'ok show' : ''}" id="${e.id}-fb">${st.ok ? e.fbOk : ''}</div>
+    ${e.resol ? `<div class="tools"><button class="btn sm" data-res="${e.id}" ${hab ? '' : 'disabled title="Primero intentá responder"'}>Ver resolución paso a paso</button></div><div class="resol" id="${e.id}-res">${e.resol}</div>` : ''}</div>`;
+}
+const est = id => (E.ejercicios[id] = E.ejercicios[id] || {ok:false,intentos:0});
+function pista(e, st){ const p = e.pistas || ['Revisá el planteo e intentá de nuevo.']; return `<strong>Pista ${Math.min(st.intentos,p.length)}:</strong> ${p[Math.min(st.intentos-1,p.length-1)]}`; }
+function tras(id){ const c = $('card-'+id); const b = c.querySelector(`[data-res="${id}"]`); if(b){ b.disabled = false; b.removeAttribute('title'); } guardar(); renderMath($(id+'-fb')); actualizarProgreso(); }
+function okEj(id){ const c = $('card-'+id); if(!c.querySelector('.badge.ok')) c.querySelector('.qn').insertAdjacentHTML('beforeend','<span class="badge ok">✔ resuelto</span>'); }
+function responderMC(id, j){ const e = EJ[id], st = est(id); if(st.ok) return; st.intentos++; const fb = $(id+'-fb'); const b = $('card-'+id).querySelector(`.opt[data-j="${j}"]`);
+  if(j === e.correcta){ st.ok = true; $$('#card-'+id+' .opt').forEach(x => x.disabled = true); b.classList.add('right'); fb.className = 'fb ok show'; fb.innerHTML = e.fbOk; okEj(id); }
+  else { b.classList.add('wrong'); setTimeout(() => b.classList.remove('wrong'), 1400); fb.className = 'fb no show'; fb.innerHTML = pista(e, st); }
+  tras(id); }
+const leerNum = v => { if(/\d\s+\d/.test(String(v))) return NaN; const s = String(v).trim().replace(/\s+/g,'').replace(/,/g,'.').replace(/−/g,'-'); const m = s.match(/^([-+]?(?:\d+\.?\d*|\.\d+))(?:\/(\d+\.?\d*|\.\d+))?$/); if(!m) return NaN; const a = parseFloat(m[1]); if(m[2] === undefined) return a; const b = parseFloat(m[2]); return b === 0 ? NaN : a/b; };
+function responderNum(id){ const e = EJ[id], st = est(id); if(st.ok) return; const fb = $(id+'-fb'); const vals = e.campos.map((c,j) => leerNum($(`${id}-in${j}`).value));
+  if(vals.some(isNaN)){ fb.className = 'fb no show'; fb.innerHTML = 'Escribí un solo número: entero, decimal (con coma o punto) o fracción con barra.'; return; }
+  st.intentos++; const tol = c => c.tol ?? Math.max(1e-6, Math.abs(c.r)*0.02); const malos = e.campos.filter((c,j) => Math.abs(vals[j]-c.r) > tol(c));
+  if(!malos.length){ st.ok = true; e.campos.forEach((c,j) => $(`${id}-in${j}`).disabled = true); $('card-'+id).querySelector(`[data-num="${id}"]`).disabled = true; fb.className = 'fb ok show'; fb.innerHTML = e.fbOk; okEj(id); }
+  else if(e.campos.every((c,j) => Math.abs(vals[j]-c.r) <= 4*tol(c))){ fb.className = 'fb no show'; fb.innerHTML = 'Muy cerca: revisá el redondeo, o escribí el resultado como fracción.'; }
+  else { fb.className = 'fb no show'; fb.innerHTML = pista(e, st); }
+  tras(id); }
+document.addEventListener('click', ev => { const b = ev.target.closest('button,.acc-h'); if(!b) return;
+  if(b.dataset.ej !== undefined){ responderMC(b.dataset.ej, +b.dataset.j); return; }
+  if(b.dataset.num){ responderNum(b.dataset.num); return; }
+  if(b.dataset.res){ const st = est(b.dataset.res); if(!st.ok && !st.intentos) return; const r = $(b.dataset.res+'-res'); r.classList.toggle('show'); renderMath(r); return; }
+  if(b.dataset.ir){ irA(b.dataset.ir); return; }
+  if(b.classList.contains('acc-h')){ b.parentElement.classList.toggle('open'); return; } });
+document.addEventListener('keydown', ev => { if(ev.key === 'Enter' && ev.target.classList && ev.target.classList.contains('acc-h')) ev.target.parentElement.classList.toggle('open'); if(ev.key === 'Enter' && ev.target.tagName === 'INPUT'){ const b = ev.target.closest('.numin')?.querySelector('button'); if(b) b.click(); } });
+function pasos(titulo, lista, resultado, abierto){
+  return `<div class="acc teo ${abierto ? 'open' : ''}"><div class="acc-h" tabindex="0"><span class="acc-t">${titulo}</span><span class="chev">▼</span></div><div class="acc-b">${lista.map((p,i) => `<div class="acc step open"><div class="acc-h" tabindex="0"><span class="sn">${i+1}</span><span class="acc-t">${p[0]}</span><span class="chev">▼</span></div><div class="acc-b">${p[1]}</div></div>`).join('')}${resultado ? `<div class="box okb" style="margin-top:8px"><span class="bt">Resultado</span>${resultado}</div>` : ''}</div></div>`;
+}
+
+/* ================= contenido · tema 1 ================= */
+const PRAC_REC = [
+  { id:'p-rec1', tipo:'mc', et:'1', rot:1, enunciado:R_`¿En qué valores de \(x\) se cortan la parábola \(y=x^2\) y la recta \(y=2x\)?`,
+    opciones:[R_`\(x=0\) y \(x=2\)`, R_`\(x=0\) y \(x=4\)`, R_`\(x=-2\) y \(x=2\)`, R_`Solo en \(x=2\)`], correcta:0,
+    fbOk:R_`Sí: se cortan en \(x=0\) y en \(x=2\), en los puntos \((0;0)\) y \((2;4)\). La cuenta está en la resolución paso a paso.`,
+    pistas:[R_`Igualá las dos ecuaciones y llevá todo a un mismo miembro.`, R_`No dividas por \(x\): se pierde la solución \(x=0\). Sacá factor común.`],
+    resol:R_`<strong>1. Igualar.</strong> \(x^2=2x\ \Rightarrow\ x^2-2x=0\).<br><strong>2. Factor común.</strong> \(x\,(x-2)=0\). Un producto vale cero cuando alguno de los factores vale cero: \(x=0\), o bien \(x-2=0\ \Rightarrow\ x=2\).<br><strong>3. Los puntos.</strong> En la recta: \(y=2\cdot0=0\) e \(y=2\cdot2=4\). Son \((0;0)\) y \((2;4)\).<br><strong>4. Control en la parábola.</strong> \(0^2=0\) y \(2^2=4\). Coinciden.` },
+  { id:'p-rec2', tipo:'mc', et:'2', rot:2, enunciado:R_`\(R\) es el recinto encerrado entre \(y=x^2\) e \(y=2x\). ¿Cuál es su descripción con franjas verticales?`,
+    opciones:[R_`\(0\le x\le2\) y \(x^2\le y\le2x\)`, R_`\(0\le x\le2\) y \(2x\le y\le x^2\)`, R_`\(-2\le x\le2\) y \(x^2\le y\le2x\)`, R_`\(x^2\le x\le2x\) y \(0\le y\le4\)`], correcta:0,
+    fbOk:R_`Correcto: \(x\) va entre los cortes, 0 y 2, y cada franja entra por la parábola y sale por la recta.`,
+    pistas:[R_`Los límites de \(x\) son los valores donde se cortan las curvas.`, R_`Evaluá las dos curvas en \(x=1\): la mayor es el techo.`],
+    resol:R_`<strong>1. Límites de \(x\).</strong> Las curvas se cortan en \(x=0\) y \(x=2\) (ejercicio 1): \(0\le x\le2\).<br><strong>2. Techo y piso.</strong> En \(x=1\), que está entre 0 y 2: la parábola vale \(1^2=1\) y la recta vale \(2\cdot1=2\). Como \(2\gt1\), la recta es el techo y la parábola, el piso.<br><strong>3. Descripción.</strong>\[R:\sis{0\le x\le2 \\ x^2\le y\le2x}\]` },
+  { id:'p-rec3', tipo:'num', et:'3', enunciado:R_`Calculá el área del recinto encerrado entre \(y=x^2\) e \(y=2x\).`, campos:[{et:R_`\(A=\)`, r:4/3, tol:0.004, nombre:'el área'}],
+    fbOk:R_`Correcto: \(A=\dfrac{4}{3}\approx1{,}33\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`\(A=\int_a^b\left(\text{techo}-\text{piso}\right)\dd x\), con los cortes como límites.`, R_`La primitiva de \(2x-x^2\) es \(x^2-\dfrac{x^3}{3}\). Evaluala en 2 y en 0.`],
+    resol:R_`<strong>1. Plantear.</strong> Con \(0\le x\le2\), techo \(2x\) y piso \(x^2\): \[A=\int_0^2\left(2x-x^2\right)\dd x\]<strong>2. Primitiva.</strong> La de \(2x\) es \(x^2\) y la de \(x^2\) es \(\dfrac{x^3}{3}\): \[A=\ev{x^2-\frac{x^3}{3}}_0^2\]<strong>3. Evaluar.</strong>\[A=\left(2^2-\frac{2^3}{3}\right)-\left(0^2-\frac{0^3}{3}\right)=4-\frac{8}{3}-0=\frac{12}{3}-\frac{8}{3}=\frac{4}{3}\approx1{,}33\]` },
+  { id:'p-rec4', tipo:'mc', et:'4', rot:2, enunciado:R_`El mismo recinto, entre \(y=x^2\) e \(y=2x\), ahora con franjas horizontales. ¿Cuál es la descripción?`,
+    opciones:[R_`\(0\le y\le4\) y \(\dfrac{y}{2}\le x\le\sqrt{y}\)`, R_`\(0\le y\le4\) y \(\sqrt{y}\le x\le\dfrac{y}{2}\)`, R_`\(0\le y\le2\) y \(\dfrac{y}{2}\le x\le\sqrt{y}\)`], correcta:0,
+    fbOk:R_`Sí: \(y\) va entre las alturas de los cortes, 0 y 4, y cada franja entra por la recta y sale por la parábola.`,
+    pistas:[R_`Despejá \(x\) en las dos ecuaciones: \(x=\dfrac{y}{2}\) y \(x=\sqrt{y}\).`, R_`Evaluá los dos despejes en \(y=1\): el menor es el borde izquierdo. Y los límites de \(y\) son las alturas de los puntos de corte.`],
+    resol:R_`<strong>1. Despejar \(x\).</strong> De \(y=2x\): \(x=\dfrac{y}{2}\). De \(y=x^2\), con \(x\ge0\): \(x=\sqrt{y}\).<br><strong>2. Límites de \(y\).</strong> Los puntos de corte son \((0;0)\) y \((2;4)\): sus alturas dan \(0\le y\le4\).<br><strong>3. Borde izquierdo y derecho.</strong> En \(y=1\): la recta da \(x=\dfrac{1}{2}=0{,}5\) y la parábola da \(x=\sqrt{1}=1\). Como \(0{,}5\lt1\), la franja entra por la recta y sale por la parábola.<br><strong>4. Descripción.</strong>\[R:\sis{0\le y\le4 \\ \dfrac{y}{2}\le x\le\sqrt{y}}\]` },
+  { id:'p-rec5', tipo:'num', et:'5', enunciado:R_`El recinto \(R\) está limitado por \(y=\sqrt{x}\), el eje \(x\) y la recta \(x=4\). Calculá su área.`, campos:[{et:R_`\(A=\)`, r:16/3, tol:0.004, nombre:'el área'}],
+    fbOk:R_`Correcto: \(A=\dfrac{16}{3}\approx5{,}33\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`Con franjas verticales: \(0\le x\le4\), piso \(y=0\) y techo \(y=\sqrt{x}\).`, R_`\(\sqrt{x}=x^{\frac{1}{2}}\), y su primitiva es \(\dfrac{2}{3}\,x^{\frac{3}{2}}\).`],
+    resol:R_`<strong>1. Describir.</strong> La curva \(y=\sqrt{x}\) arranca en el origen y queda por encima del eje \(x\): \[R:\sis{0\le x\le4 \\ 0\le y\le\sqrt{x}}\]<strong>2. Plantear.</strong> \(A=\int_0^4\left(\sqrt{x}-0\right)\dd x=\int_0^4 x^{\frac{1}{2}}\dd x\).<br><strong>3. Primitiva.</strong> Se suma 1 al exponente, \(\dfrac{1}{2}+1=\dfrac{3}{2}\), y se divide por el exponente nuevo; dividir por \(\dfrac{3}{2}\) es multiplicar por \(\dfrac{2}{3}\): \[A=\ev{\frac{2}{3}\,x^{\frac{3}{2}}}_0^4\]<strong>4. Evaluar.</strong> \(4^{\frac{3}{2}}=\left(\sqrt{4}\right)^3=2^3=8\) y \(0^{\frac{3}{2}}=0\): \[A=\frac{2}{3}\cdot8-\frac{2}{3}\cdot0=\frac{16}{3}-0=\frac{16}{3}\approx5{,}33\]` }
+];
+function initRecintos(){
+  $('ej-recintos').innerHTML = pasos(R_`Ejemplo 1 · El recinto entre \(y=x^2\) e \(y=x+2\): descripción y área`, [
+      ['Dónde se cortan', R_`Se igualan las ecuaciones: \(x^2=x+2\ \Rightarrow\ x^2-x-2=0\). Con la fórmula resolvente, \(a=1\), \(b=-1\), \(c=-2\): \[x=\frac{-(-1)\pm\sqrt{(-1)^2-4\cdot1\cdot(-2)}}{2\cdot1}=\frac{1\pm\sqrt{1+8}}{2}=\frac{1\pm\sqrt{9}}{2}=\frac{1\pm3}{2}\] \[x_1=\frac{1-3}{2}=\frac{-2}{2}=-1\qquad x_2=\frac{1+3}{2}=\frac{4}{2}=2\] En la recta: \(y=-1+2=1\) e \(y=2+2=4\). Los puntos de corte son \((-1;1)\) y \((2;4)\). Control en la parábola: \((-1)^2=1\) y \(2^2=4\).`],
+      ['Cuál es el techo', R_`Se elige un valor entre \(-1\) y \(2\), por ejemplo \(x=0\). La parábola vale \(0^2=0\) y la recta vale \(0+2=2\). Como \(2\gt0\), la recta es el techo y la parábola, el piso.`],
+      ['La descripción', R_`\(x\) entre los cortes; \(y\) entre el piso y el techo: \[R:\sis{-1\le x\le2 \\ x^2\le y\le x+2}\]`],
+      ['El área: plantear y hallar la primitiva', R_`Techo menos piso. La primitiva de \(x\) es \(\dfrac{x^2}{2}\), la de 2 es \(2x\) y la de \(x^2\) es \(\dfrac{x^3}{3}\): \[A=\int_{-1}^{2}\left[(x+2)-x^2\right]\dd x=\ev{\frac{x^2}{2}+2x-\frac{x^3}{3}}_{-1}^{2}\]`],
+      ['El área: evaluar', R_`En \(x=2\): \[\frac{2^2}{2}+2\cdot2-\frac{2^3}{3}=2+4-\frac{8}{3}=6-\frac{8}{3}=\frac{18}{3}-\frac{8}{3}=\frac{10}{3}\] En \(x=-1\): \[\frac{(-1)^2}{2}+2\cdot(-1)-\frac{(-1)^3}{3}=\frac{1}{2}-2-\frac{-1}{3}=\frac{1}{2}-2+\frac{1}{3}=\frac{3}{6}-\frac{12}{6}+\frac{2}{6}=-\frac{7}{6}\] La resta: \[A=\frac{10}{3}-\left(-\frac{7}{6}\right)=\frac{10}{3}+\frac{7}{6}=\frac{20}{6}+\frac{7}{6}=\frac{27}{6}=\frac{9}{2}\] simplificando por 3.`]
+    ], R_`\(R\): \(-1\le x\le2\), \(x^2\le y\le x+2\). Su área es \(\dfrac{9}{2}=4{,}5\).`, true)
+    + pasos(R_`Ejemplo 2 · El recinto entre \(y=x^2\) e \(y=x\), descripto de las dos maneras`, [
+      ['Dónde se cortan', R_`\(x^2=x\ \Rightarrow\ x^2-x=0\ \Rightarrow\ x\,(x-1)=0\). Entonces \(x=0\), o bien \(x-1=0\ \Rightarrow\ x=1\). Los puntos de corte son \((0;0)\) y \((1;1)\).`],
+      ['Con franjas verticales', R_`En \(x=\dfrac{1}{2}\) la recta vale \(\dfrac{1}{2}=0{,}5\) y la parábola, \(\left(\dfrac{1}{2}\right)^2=\dfrac{1}{4}=0{,}25\): la recta es el techo. \[R:\sis{0\le x\le1 \\ x^2\le y\le x}\]`],
+      ['Con franjas horizontales', R_`Hay que despejar \(x\). De \(y=x\): \(x=y\). De \(y=x^2\), con \(x\ge0\): \(x=\sqrt{y}\). Las alturas de los puntos de corte dan \(0\le y\le1\). En \(y=\dfrac{1}{4}\) la recta da \(x=\dfrac{1}{4}=0{,}25\) y la parábola da \(x=\sqrt{\dfrac{1}{4}}=\dfrac{1}{2}=0{,}5\): la franja entra por la recta y sale por la parábola. \[R:\sis{0\le y\le1 \\ y\le x\le\sqrt{y}}\]`],
+      ['El área con franjas horizontales', R_`Ahora el largo de la franja es borde derecho menos borde izquierdo, y se integra respecto de \(y\). Como \(\sqrt{y}=y^{\frac{1}{2}}\), para hallar su primitiva se suma 1 al exponente, \(\dfrac{1}{2}+1=\dfrac{3}{2}\), y se divide por el exponente nuevo; dividir por \(\dfrac{3}{2}\) es multiplicar por \(\dfrac{2}{3}\). Queda \(\dfrac{2}{3}\,y^{\frac{3}{2}}\): \[A=\int_0^1\left(\sqrt{y}-y\right)\dd y=\ev{\frac{2}{3}\,y^{\frac{3}{2}}-\frac{y^2}{2}}_0^1\] \[=\left(\frac{2}{3}\cdot1^{\frac{3}{2}}-\frac{1^2}{2}\right)-\left(\frac{2}{3}\cdot0^{\frac{3}{2}}-\frac{0^2}{2}\right)=\frac{2}{3}-\frac{1}{2}-0=\frac{4}{6}-\frac{3}{6}=\frac{1}{6}\] Es el mismo valor que dio con franjas verticales en el recuadro del error más frecuente.`]
+    ], R_`El mismo recinto admite las dos descripciones, y el área da \(\dfrac{1}{6}\) con cualquiera de ellas.`);
+  $('prac-recintos').innerHTML = PRAC_REC.map(ejHTML).join('');
+  EXP.recintos = crearRecinto('ex-recintos');
+  renderMath($('tab-recintos'));
+}
+
+/* ================= contenido · tema 2 ================= */
+const PRAC_DOB = [
+  { id:'p-dob1', tipo:'num', et:'1', enunciado:R_`Calculá \(\int_0^3\int_0^2(2x+y)\dd y\dd x\).`, campos:[{et:R_`\(I=\)`, r:24, tol:0.01, nombre:'la integral'}],
+    fbOk:R_`Correcto: la integral vale 24. Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`Primero la de adentro, respecto de \(y\): \(2x\) es una constante y su primitiva es \(2x\cdot y\).`, R_`La integral de adentro da \(4x+2\). Falta integrar eso entre 0 y 3.`],
+    resol:R_`<strong>1. Adentro, con \(x\) fija.</strong> La primitiva de \(2x\) respecto de \(y\) es \(2x\cdot y\) y la de \(y\) es \(\dfrac{y^2}{2}\): \[\int_0^2(2x+y)\dd y=\ev{2x\cdot y+\frac{y^2}{2}}_0^2=\left(2x\cdot2+\frac{2^2}{2}\right)-\left(2x\cdot0+\frac{0^2}{2}\right)=4x+2-0=4x+2\]<strong>2. Afuera.</strong> \[\int_0^3(4x+2)\dd x=\ev{2x^2+2x}_0^3=\left(2\cdot3^2+2\cdot3\right)-\left(2\cdot0^2+2\cdot0\right)=18+6-0=24\]` },
+  { id:'p-dob2', tipo:'num', et:'2', enunciado:R_`Calculá \(\int_0^1\int_0^x(x+y)\dd y\dd x\).`, campos:[{et:R_`\(I=\)`, r:0.5, tol:0.004, nombre:'la integral'}],
+    fbOk:R_`Correcto: la integral vale \(\dfrac{1}{2}\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`El límite superior de adentro es \(x\): al evaluar la primitiva, se reemplaza \(y\) por \(x\).`, R_`La integral de adentro da \(\dfrac{3x^2}{2}\).`],
+    resol:R_`<strong>1. Adentro, con \(x\) fija.</strong> \[\int_0^x(x+y)\dd y=\ev{x\cdot y+\frac{y^2}{2}}_0^x=\left(x\cdot x+\frac{x^2}{2}\right)-\left(x\cdot0+\frac{0^2}{2}\right)=x^2+\frac{x^2}{2}-0=\frac{2x^2}{2}+\frac{x^2}{2}=\frac{3x^2}{2}\]<strong>2. Afuera.</strong> La primitiva de \(\dfrac{3x^2}{2}\) es \(\dfrac{3}{2}\cdot\dfrac{x^3}{3}=\dfrac{x^3}{2}\): \[\int_0^1\frac{3x^2}{2}\dd x=\ev{\frac{x^3}{2}}_0^1=\frac{1^3}{2}-\frac{0^3}{2}=\frac{1}{2}-0=\frac{1}{2}\]` },
+  { id:'p-dob3', tipo:'num', et:'3', enunciado:R_`Calculá \(\iint_R y\dd A\), donde \(R\) es el recinto encerrado entre \(y=x^2\) e \(y=4\).`, campos:[{et:R_`\(I=\)`, r:25.6, tol:0.02, nombre:'la integral'}],
+    fbOk:R_`Correcto: la integral vale \(\dfrac{128}{5}=25{,}6\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`Primero el recinto: las curvas se cortan donde \(x^2=4\), y la recta \(y=4\) es el techo.`, R_`\(\int_{-2}^{2}\int_{x^2}^{4}y\dd y\dd x\). La integral de adentro da \(8-\dfrac{x^4}{2}\).`, R_`Al evaluar en \(x=-2\) cuidá los signos: \((-2)^5=-32\).`],
+    resol:R_`<strong>1. El recinto.</strong> Cortes: \(x^2=4\ \Rightarrow\ x=-2\) o \(x=2\). En \(x=0\) la parábola vale \(0^2=0\), menor que 4: la recta es el techo. \[R:\sis{-2\le x\le2 \\ x^2\le y\le4}\]<strong>2. Adentro.</strong> \[\int_{x^2}^{4}y\dd y=\ev{\frac{y^2}{2}}_{x^2}^{4}=\frac{4^2}{2}-\frac{\left(x^2\right)^2}{2}=\frac{16}{2}-\frac{x^4}{2}=8-\frac{x^4}{2}\]<strong>3. Afuera.</strong> La primitiva de \(\dfrac{x^4}{2}\) es \(\dfrac{x^5}{2\cdot5}=\dfrac{x^5}{10}\): \[\int_{-2}^{2}\left(8-\frac{x^4}{2}\right)\dd x=\ev{8x-\frac{x^5}{10}}_{-2}^{2}=\left(8\cdot2-\frac{2^5}{10}\right)-\left(8\cdot(-2)-\frac{(-2)^5}{10}\right)\] \[=\left(16-\frac{32}{10}\right)-\left(-16-\frac{-32}{10}\right)=\left(16-\frac{32}{10}\right)-\left(-16+\frac{32}{10}\right)=(16-3{,}2)-(-16+3{,}2)=12{,}8-(-12{,}8)=12{,}8+12{,}8=25{,}6\]` },
+  { id:'p-dob4', tipo:'mc', et:'4', rot:2, enunciado:R_`Se quiere integrar \(f(x;y)=x+y\) sobre el recinto \(0\le x\le2\), \(0\le y\le x^2\). ¿Cuál de estos planteos es correcto?`,
+    opciones:[R_`\(\int_0^2\int_0^{x^2}(x+y)\dd y\dd x\)`, R_`\(\int_0^{x^2}\int_0^2(x+y)\dd y\dd x\)`, R_`\(\int_0^2\int_0^{x^2}(x+y)\dd x\dd y\)`], correcta:0,
+    fbOk:R_`Sí: los límites con \(x\) van adentro, con diferencial \(\dd y\), y los números van afuera, con \(\dd x\).`,
+    pistas:[R_`Los límites de la integral de afuera tienen que ser números.`, R_`\(0\) y \(x^2\) son límites de \(y\): la integral que los lleva tiene que tener diferencial \(\dd y\).`] },
+  { id:'p-dob5', tipo:'mc', et:'5', rot:0, enunciado:R_`¿Cuál es \(\int_0^1\int_0^x f(x;y)\dd y\dd x\) con el orden de integración cambiado?`,
+    opciones:[R_`\(\int_0^1\int_y^1 f(x;y)\dd x\dd y\)`, R_`\(\int_0^1\int_0^y f(x;y)\dd x\dd y\)`, R_`\(\int_0^x\int_0^1 f(x;y)\dd x\dd y\)`], correcta:0,
+    fbOk:R_`Correcto: el recinto es el triángulo que está debajo de \(y=x\), y cada franja horizontal entra por \(x=y\) y sale por \(x=1\).`,
+    pistas:[R_`Dibujá el recinto \(0\le x\le1\), \(0\le y\le x\): es un triángulo.`, R_`Trazá una franja horizontal: ¿por qué recta entra y por cuál sale?`],
+    resol:R_`<strong>1. El recinto.</strong> \(0\le x\le1\) y \(0\le y\le x\): el triángulo de vértices \((0;0)\), \((1;0)\) y \((1;1)\), debajo de la recta \(y=x\).<br><strong>2. Franjas horizontales.</strong> A una altura \(y\), la franja entra por la recta \(y=x\), o sea por \(x=y\), y sale por \(x=1\). Las alturas van de 0 a 1.<br><strong>3. Descripción y planteo.</strong>\[R:\sis{0\le y\le1 \\ y\le x\le1}\qquad\int_0^1\int_y^1 f(x;y)\dd x\dd y\]` }
+];
+function initDobles(){
+  $('ej-dobles').innerHTML = pasos(R_`Ejemplo 1 · \(\iint_R(x+2y)\dd A\) sobre el rectángulo \(0\le x\le2\), \(0\le y\le1\)`, [
+      ['Plantear', R_`Con franjas verticales: \[\iint_R(x+2y)\dd A=\int_0^2\left[\int_0^1(x+2y)\dd y\right]\dd x\]`],
+      [R_`La integral de adentro, con \(x\) fija`, R_`La primitiva de \(x\) respecto de \(y\) es \(x\cdot y\), y la de \(2y\) es \(y^2\): \[\int_0^1(x+2y)\dd y=\ev{x\cdot y+y^2}_0^1=\left(x\cdot1+1^2\right)-\left(x\cdot0+0^2\right)=(x+1)-0=x+1\]`],
+      ['La integral de afuera', R_`\[\int_0^2(x+1)\dd x=\ev{\frac{x^2}{2}+x}_0^2=\left(\frac{2^2}{2}+2\right)-\left(\frac{0^2}{2}+0\right)=(2+2)-0=4\]`],
+      ['Verificación en el otro orden', R_`Con franjas horizontales, \(\int_0^1\left[\int_0^2(x+2y)\dd x\right]\dd y\). Adentro, con \(y\) fija: \[\int_0^2(x+2y)\dd x=\ev{\frac{x^2}{2}+2y\cdot x}_0^2=\left(\frac{2^2}{2}+2y\cdot2\right)-\left(\frac{0^2}{2}+2y\cdot0\right)=(2+4y)-0=2+4y\] Afuera: \[\int_0^1(2+4y)\dd y=\ev{2y+2y^2}_0^1=\left(2\cdot1+2\cdot1^2\right)-\left(2\cdot0+2\cdot0^2\right)=2+2-0=4\] Coincide.`]
+    ], R_`\(\iint_R(x+2y)\dd A=4\), en cualquiera de los dos órdenes.`, true)
+    + pasos(R_`Ejemplo 2 · \(\iint_R x\cdot y\dd A\) sobre el recinto entre \(y=x^2\) e \(y=x\)`, [
+      ['El recinto y el planteo', R_`Es el recinto del tema 1: \(0\le x\le1\), \(x^2\le y\le x\). Los límites que dependen de \(x\) van adentro: \[\iint_R x\cdot y\dd A=\int_0^1\left[\int_{x^2}^{x}x\cdot y\dd y\right]\dd x\]`],
+      [R_`La integral de adentro, con \(x\) fija`, R_`\(x\) es una constante que multiplica; la primitiva de \(y\) es \(\dfrac{y^2}{2}\): \[\int_{x^2}^{x}x\cdot y\dd y=\ev{\frac{x\cdot y^2}{2}}_{x^2}^{x}=\frac{x\cdot x^2}{2}-\frac{x\cdot\left(x^2\right)^2}{2}=\frac{x^3}{2}-\frac{x\cdot x^4}{2}=\frac{x^3}{2}-\frac{x^5}{2}\]`],
+      ['La integral de afuera', R_`La primitiva de \(\dfrac{x^3}{2}\) es \(\dfrac{x^4}{2\cdot4}=\dfrac{x^4}{8}\), y la de \(\dfrac{x^5}{2}\) es \(\dfrac{x^6}{2\cdot6}=\dfrac{x^6}{12}\): \[\int_0^1\left(\frac{x^3}{2}-\frac{x^5}{2}\right)\dd x=\ev{\frac{x^4}{8}-\frac{x^6}{12}}_0^1=\left(\frac{1^4}{8}-\frac{1^6}{12}\right)-\left(\frac{0^4}{8}-\frac{0^6}{12}\right)\] \[=\frac{1}{8}-\frac{1}{12}-0=\frac{3}{24}-\frac{2}{24}=\frac{1}{24}\]`]
+    ], R_`\(\iint_R x\cdot y\dd A=\dfrac{1}{24}\).`)
+    + pasos(R_`Ejemplo 3 · El ejemplo 2 con el orden cambiado`, [
+      ['El recinto con franjas horizontales', R_`Del tema 1: \(0\le y\le1\), \(y\le x\le\sqrt{y}\). No alcanza con intercambiar los límites de antes: hay que volver a describir el recinto. \[\iint_R x\cdot y\dd A=\int_0^1\left[\int_{y}^{\sqrt{y}}x\cdot y\dd x\right]\dd y\]`],
+      [R_`La integral de adentro, con \(y\) fija`, R_`Ahora la constante es \(y\), y la primitiva de \(x\) es \(\dfrac{x^2}{2}\). Además, \(\left(\sqrt{y}\right)^2=y\): \[\int_{y}^{\sqrt{y}}x\cdot y\dd x=\ev{\frac{y\cdot x^2}{2}}_{y}^{\sqrt{y}}=\frac{y\cdot\left(\sqrt{y}\right)^2}{2}-\frac{y\cdot y^2}{2}=\frac{y\cdot y}{2}-\frac{y^3}{2}=\frac{y^2}{2}-\frac{y^3}{2}\]`],
+      ['La integral de afuera', R_`La primitiva de \(\dfrac{y^2}{2}\) es \(\dfrac{y^3}{2\cdot3}=\dfrac{y^3}{6}\), y la de \(\dfrac{y^3}{2}\) es \(\dfrac{y^4}{2\cdot4}=\dfrac{y^4}{8}\): \[\int_0^1\left(\frac{y^2}{2}-\frac{y^3}{2}\right)\dd y=\ev{\frac{y^3}{6}-\frac{y^4}{8}}_0^1=\left(\frac{1^3}{6}-\frac{1^4}{8}\right)-\left(\frac{0^3}{6}-\frac{0^4}{8}\right)\] \[=\frac{1}{6}-\frac{1}{8}-0=\frac{4}{24}-\frac{3}{24}=\frac{1}{24}\] Coincide con el ejemplo 2.`]
+    ], R_`Los dos órdenes dan \(\dfrac{1}{24}\). Cambiar el orden obliga a describir de nuevo el recinto.`);
+  $('prac-dobles').innerHTML = PRAC_DOB.map(ejHTML).join('');
+  EXP.dobles = crearTajadas('ex-dobles');
+  renderMath($('tab-dobles'));
+}
+
+/* ================= contenido · tema 3 ================= */
+const PRAC_VOL = [
+  { id:'p-vol1', tipo:'num', et:'1', enunciado:R_`Calculá el volumen del sólido que tiene por techo el plano \(z=5-x-y\) y por piso el rectángulo \(0\le x\le2\), \(0\le y\le1\).`, campos:[{et:R_`\(V=\)`, r:7, tol:0.01, nombre:'el volumen'}],
+    fbOk:R_`Correcto: \(V=7\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`\(V=\int_0^2\int_0^1(5-x-y)\dd y\dd x\). Empezá por la de adentro.`, R_`La integral de adentro da \(\dfrac{9}{2}-x\).`],
+    resol:R_`<strong>1. Signo del techo.</strong> En el rectángulo, \(x\le2\) e \(y\le1\), así que \(z\ge5-2-1=2\gt0\): la integral es el volumen.<br><strong>2. Adentro, con \(x\) fija.</strong> \[\int_0^1(5-x-y)\dd y=\ev{5y-x\cdot y-\frac{y^2}{2}}_0^1=\left(5\cdot1-x\cdot1-\frac{1^2}{2}\right)-\left(5\cdot0-x\cdot0-\frac{0^2}{2}\right)\] \[=5-x-\frac{1}{2}-0=\frac{10}{2}-\frac{1}{2}-x=\frac{9}{2}-x\]<strong>3. Afuera.</strong> \[V=\int_0^2\left(\frac{9}{2}-x\right)\dd x=\ev{\frac{9x}{2}-\frac{x^2}{2}}_0^2=\left(\frac{9\cdot2}{2}-\frac{2^2}{2}\right)-\left(\frac{9\cdot0}{2}-\frac{0^2}{2}\right)=9-2-0=7\]` },
+  { id:'p-vol2', tipo:'num', et:'2', enunciado:R_`Usá una integral doble para calcular el área del recinto encerrado entre \(y=x^2\) e \(y=4\).`, campos:[{et:R_`\(A=\)`, r:32/3, tol:0.006, nombre:'el área'}],
+    fbOk:R_`Correcto: \(A=\dfrac{32}{3}\approx10{,}67\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`\(A=\iint_R 1\dd A\), con \(-2\le x\le2\) y \(x^2\le y\le4\).`, R_`La integral de adentro da \(4-x^2\): techo menos piso.`, R_`Al evaluar en \(x=-2\): \((-2)^3=-8\).`],
+    resol:R_`<strong>1. El recinto.</strong> Cortes: \(x^2=4\ \Rightarrow\ x=-2\) o \(x=2\); la recta \(y=4\) es el techo. \[A=\int_{-2}^{2}\int_{x^2}^{4}1\dd y\dd x\]<strong>2. Adentro.</strong> \[\int_{x^2}^{4}1\dd y=\ev{y}_{x^2}^{4}=4-x^2\]<strong>3. Afuera.</strong> \[A=\int_{-2}^{2}\left(4-x^2\right)\dd x=\ev{4x-\frac{x^3}{3}}_{-2}^{2}=\left(4\cdot2-\frac{2^3}{3}\right)-\left(4\cdot(-2)-\frac{(-2)^3}{3}\right)\] \[=\left(8-\frac{8}{3}\right)-\left(-8-\frac{-8}{3}\right)=\left(8-\frac{8}{3}\right)-\left(-8+\frac{8}{3}\right)=\left(\frac{24}{3}-\frac{8}{3}\right)-\left(-\frac{24}{3}+\frac{8}{3}\right)=\frac{16}{3}-\left(-\frac{16}{3}\right)=\frac{16}{3}+\frac{16}{3}=\frac{32}{3}\approx10{,}67\]` },
+  { id:'p-vol3', tipo:'num', et:'3', enunciado:R_`Calculá el volumen del sólido que tiene por techo \(z=3y\) y por piso el recinto encerrado entre \(y=x^2\) e \(y=1\).`, campos:[{et:R_`\(V=\)`, r:2.4, tol:0.006, nombre:'el volumen'}],
+    fbOk:R_`Correcto: \(V=\dfrac{12}{5}=2{,}4\). Cada cuenta está en la resolución paso a paso.`,
+    pistas:[R_`El recinto: \(-1\le x\le1\), \(x^2\le y\le1\).`, R_`La integral de adentro da \(\dfrac{3}{2}-\dfrac{3x^4}{2}\).`, R_`Al evaluar en \(x=-1\): \((-1)^5=-1\).`],
+    resol:R_`<strong>1. El recinto.</strong> Cortes: \(x^2=1\ \Rightarrow\ x=-1\) o \(x=1\). En \(x=0\) la parábola vale \(0^2=0\), menor que 1: la recta \(y=1\) es el techo del recinto. \[R:\sis{-1\le x\le1 \\ x^2\le y\le1}\]<strong>2. Signo del techo del sólido.</strong> En \(R\), \(y\ge x^2\ge0\), así que \(z=3y\ge0\).<br><strong>3. Adentro.</strong> \[\int_{x^2}^{1}3y\dd y=\ev{\frac{3y^2}{2}}_{x^2}^{1}=\frac{3\cdot1^2}{2}-\frac{3\cdot\left(x^2\right)^2}{2}=\frac{3}{2}-\frac{3x^4}{2}\]<strong>4. Afuera.</strong> La primitiva de \(\dfrac{3x^4}{2}\) es \(\dfrac{3x^5}{2\cdot5}=\dfrac{3x^5}{10}\): \[V=\int_{-1}^{1}\left(\frac{3}{2}-\frac{3x^4}{2}\right)\dd x=\ev{\frac{3x}{2}-\frac{3x^5}{10}}_{-1}^{1}=\left(\frac{3\cdot1}{2}-\frac{3\cdot1^5}{10}\right)-\left(\frac{3\cdot(-1)}{2}-\frac{3\cdot(-1)^5}{10}\right)\] \[=\left(\frac{3}{2}-\frac{3}{10}\right)-\left(-\frac{3}{2}-\frac{-3}{10}\right)=\left(\frac{3}{2}-\frac{3}{10}\right)-\left(-\frac{3}{2}+\frac{3}{10}\right)=\left(\frac{15}{10}-\frac{3}{10}\right)-\left(-\frac{15}{10}+\frac{3}{10}\right)=\frac{12}{10}-\left(-\frac{12}{10}\right)=\frac{12}{10}+\frac{12}{10}=\frac{24}{10}=\frac{12}{5}=2{,}4\]` },
+  { id:'p-vol4', tipo:'mc', et:'4', rot:0, enunciado:R_`El techo es \(z=y\) y el piso, el rectángulo \(0\le x\le2\), \(-1\le y\le1\). Un compañero calculó \(\iint_R y\dd A=0\) y concluyó que el sólido encerrado entre el techo y el piso tiene volumen 0. ¿Cuánto vale ese volumen?`,
+    opciones:['0', '1', '2', '4'], correcta:2,
+    fbOk:R_`Correcto: \(V=2\). La integral vale 0 porque la parte con techo negativo resta; el volumen se obtiene separando las dos partes. La cuenta está en la resolución paso a paso.`,
+    pistas:[R_`El techo \(z=y\) es negativo donde \(y\lt0\): ahí la integral resta.`, R_`Separá el rectángulo en \(y=0\) y calculá la integral de cada mitad.`, R_`\(V=I-2N\), donde \(N\) es la integral sobre la mitad con \(y\lt0\).`],
+    resol:R_`<strong>1. Signo del techo.</strong> \(z=y\) es positivo si \(y\gt0\) y negativo si \(y\lt0\): hay que separar en \(y=0\).<br><strong>2. Parte con techo positivo, \(0\le y\le1\).</strong> \[\int_0^1 y\dd y=\ev{\frac{y^2}{2}}_0^1=\frac{1^2}{2}-\frac{0^2}{2}=\frac{1}{2}-0=\frac{1}{2}\] \[\int_0^2\frac{1}{2}\dd x=\ev{\frac{x}{2}}_0^2=\frac{2}{2}-\frac{0}{2}=1-0=1\]<strong>3. Parte con techo negativo, \(-1\le y\le0\).</strong> \[\int_{-1}^{0}y\dd y=\ev{\frac{y^2}{2}}_{-1}^{0}=\frac{0^2}{2}-\frac{(-1)^2}{2}=0-\frac{1}{2}=-\frac{1}{2}\] \[N=\int_0^2\left(-\frac{1}{2}\right)\dd x=\ev{-\frac{x}{2}}_0^2=-\frac{2}{2}-\left(-\frac{0}{2}\right)=-1+0=-1\]<strong>4. El volumen.</strong> \(V=1-(-1)=1+1=2\).<br><strong>5. Con la fórmula.</strong> La integral completa es \(I=1+(-1)=0\), como obtuvo el compañero, y \(V=I-2N=0-2\cdot(-1)=0+2=2\).` },
+  { id:'p-vol5', tipo:'mc', et:'5', rot:3, enunciado:R_`\(R\) es el rectángulo \(0\le x\le3\), \(0\le y\le2\). ¿Cuánto vale \(\iint_R 1\dd A\)?`,
+    opciones:['6', '5', '1', '10'], correcta:0,
+    fbOk:R_`Sí: vale 6, el área del rectángulo. Un sólido de altura 1 tiene tantas unidades de volumen como unidades de área tiene su base.`,
+    pistas:[R_`Pensalo como el volumen de un sólido de altura 1 apoyado sobre \(R\).`, R_`\(\iint_R 1\dd A\) es el área de \(R\).`],
+    resol:R_`<strong>1. Qué mide.</strong> \(\iint_R 1\dd A\) es el área de \(R\), un rectángulo de base \(3-0=3\) y altura \(2-0=2\): \(A=3\cdot2=6\).<br><strong>2. Con la integral iterada.</strong> \[\int_0^3\int_0^2 1\dd y\dd x\qquad\int_0^2 1\dd y=\ev{y}_0^2=2-0=2\qquad\int_0^3 2\dd x=\ev{2x}_0^3=2\cdot3-2\cdot0=6-0=6\]` }
+];
+function initVolumen(){
+  $('ej-volumen').innerHTML = pasos(R_`Ejemplo 1 · Volumen bajo \(z=4-x^2-y^2\) sobre el cuadrado \(0\le x\le1\), \(0\le y\le1\)`, [
+      ['Signo del techo', R_`En el cuadrado, \(x^2\le1\) e \(y^2\le1\), así que \(z\ge4-1-1=2\gt0\). El techo es positivo en todo el recinto: la integral doble es el volumen.`],
+      ['Plantear', R_`\[V=\int_0^1\left[\int_0^1\left(4-x^2-y^2\right)\dd y\right]\dd x\]`],
+      [R_`La integral de adentro, con \(x\) fija`, R_`\[\int_0^1\left(4-x^2-y^2\right)\dd y=\ev{4y-x^2\cdot y-\frac{y^3}{3}}_0^1=\left(4\cdot1-x^2\cdot1-\frac{1^3}{3}\right)-\left(4\cdot0-x^2\cdot0-\frac{0^3}{3}\right)\] \[=4-x^2-\frac{1}{3}-0=\frac{12}{3}-\frac{1}{3}-x^2=\frac{11}{3}-x^2\] Es el área de la tajada que se obtiene al cortar el sólido con el plano de \(x\) fija.`],
+      ['La integral de afuera', R_`\[V=\int_0^1\left(\frac{11}{3}-x^2\right)\dd x=\ev{\frac{11x}{3}-\frac{x^3}{3}}_0^1=\left(\frac{11\cdot1}{3}-\frac{1^3}{3}\right)-\left(\frac{11\cdot0}{3}-\frac{0^3}{3}\right)=\frac{11}{3}-\frac{1}{3}-0=\frac{10}{3}\approx3{,}33\]`],
+      ['¿Es razonable?', R_`La altura va de \(4-1^2-1^2=2\), en \((1;1)\), a \(4-0^2-0^2=4\), en \((0;0)\), y la base mide \(1\cdot1=1\). El volumen tiene que estar entre \(2\cdot1=2\) y \(4\cdot1=4\): 3,33 está en ese rango.`]
+    ], R_`\(V=\dfrac{10}{3}\approx3{,}33\) unidades de volumen.`, true)
+    + pasos(R_`Ejemplo 2 · Volumen bajo \(z=x+y\) sobre el recinto entre \(y=x^2\) e \(y=x\)`, [
+      ['Signo del techo y planteo', R_`En el recinto, \(x\ge0\) e \(y\ge0\), así que \(z=x+y\ge0\). Con \(0\le x\le1\) y \(x^2\le y\le x\): \[V=\int_0^1\left[\int_{x^2}^{x}(x+y)\dd y\right]\dd x\]`],
+      [R_`La integral de adentro, con \(x\) fija`, R_`\[\int_{x^2}^{x}(x+y)\dd y=\ev{x\cdot y+\frac{y^2}{2}}_{x^2}^{x}=\left(x\cdot x+\frac{x^2}{2}\right)-\left(x\cdot x^2+\frac{\left(x^2\right)^2}{2}\right)\] \[=\left(x^2+\frac{x^2}{2}\right)-\left(x^3+\frac{x^4}{2}\right)=x^2+\frac{x^2}{2}-x^3-\frac{x^4}{2}\] \[=\frac{2x^2}{2}+\frac{x^2}{2}-x^3-\frac{x^4}{2}=\frac{3x^2}{2}-x^3-\frac{x^4}{2}\]`],
+      ['La integral de afuera', R_`Las primitivas: la de \(\dfrac{3x^2}{2}\) es \(\dfrac{3}{2}\cdot\dfrac{x^3}{3}=\dfrac{x^3}{2}\); la de \(x^3\) es \(\dfrac{x^4}{4}\); la de \(\dfrac{x^4}{2}\) es \(\dfrac{x^5}{2\cdot5}=\dfrac{x^5}{10}\). \[V=\int_0^1\left(\frac{3x^2}{2}-x^3-\frac{x^4}{2}\right)\dd x=\ev{\frac{x^3}{2}-\frac{x^4}{4}-\frac{x^5}{10}}_0^1\] \[=\left(\frac{1^3}{2}-\frac{1^4}{4}-\frac{1^5}{10}\right)-\left(\frac{0^3}{2}-\frac{0^4}{4}-\frac{0^5}{10}\right)\] \[=\frac{1}{2}-\frac{1}{4}-\frac{1}{10}-0=\frac{10}{20}-\frac{5}{20}-\frac{2}{20}=\frac{3}{20}=0{,}15\]`]
+    ], R_`\(V=\dfrac{3}{20}=0{,}15\) unidades de volumen.`)
+    + pasos(R_`Ejemplo 3 · Un área con integral doble: el recinto entre \(y=x^2\) e \(y=x+2\)`, [
+      ['Plantear con altura 1', R_`Del tema 1, \(-1\le x\le2\) y \(x^2\le y\le x+2\): \[A=\iint_R 1\dd A=\int_{-1}^{2}\left[\int_{x^2}^{x+2}1\dd y\right]\dd x\]`],
+      ['La integral de adentro', R_`La primitiva de 1 respecto de \(y\) es \(y\): \[\int_{x^2}^{x+2}1\dd y=\ev{y}_{x^2}^{x+2}=(x+2)-x^2\] Es techo menos piso: el largo de la franja.`],
+      ['La integral de afuera', R_`Queda la integral de Análisis I, la misma del ejemplo 1 del tema 1: \[A=\int_{-1}^{2}\left[(x+2)-x^2\right]\dd x=\ev{\frac{x^2}{2}+2x-\frac{x^3}{3}}_{-1}^{2}\] \[=\left(\frac{2^2}{2}+2\cdot2-\frac{2^3}{3}\right)-\left(\frac{(-1)^2}{2}+2\cdot(-1)-\frac{(-1)^3}{3}\right)=\left(2+4-\frac{8}{3}\right)-\left(\frac{1}{2}-2-\frac{-1}{3}\right)=\left(2+4-\frac{8}{3}\right)-\left(\frac{1}{2}-2+\frac{1}{3}\right)\] \[=\frac{10}{3}-\left(-\frac{7}{6}\right)=\frac{10}{3}+\frac{7}{6}=\frac{20}{6}+\frac{7}{6}=\frac{27}{6}=\frac{9}{2}\] con \(2+4-\dfrac{8}{3}=\dfrac{18}{3}-\dfrac{8}{3}=\dfrac{10}{3}\) y \(\dfrac{1}{2}-2+\dfrac{1}{3}=\dfrac{3}{6}-\dfrac{12}{6}+\dfrac{2}{6}=-\dfrac{7}{6}\).`]
+    ], R_`\(A=\dfrac{9}{2}=4{,}5\) unidades de área, el mismo valor que con la fórmula de Análisis I.`)
+    + pasos(R_`Ejemplo 4 · En el laboratorio: volumen de un recubrimiento de espesor variable`, [
+      ['La situación', R_`Sobre una placa rectangular de 4 cm por 2 cm se deposita un recubrimiento. En el punto \((x;y)\) de la placa, con \(x\) e \(y\) en centímetros, su espesor en centímetros es \[e(x;y)=0{,}1+0{,}02\,x+0{,}01\,y\qquad 0\le x\le4,\quad0\le y\le2\] ¿Qué volumen de material se depositó? <p class="nota-modelo">Modelo didáctico simplificado: el espesor crece de manera lineal hacia una esquina de la placa.</p>`],
+      ['Signo y planteo', R_`En la placa \(x\ge0\) e \(y\ge0\), así que \(e\ge0{,}1\gt0\). El espesor es la altura y la placa es el piso: \[V=\int_0^4\left[\int_0^2\left(0{,}1+0{,}02\,x+0{,}01\,y\right)\dd y\right]\dd x\]`],
+      [R_`La integral de adentro, con \(x\) fija`, R_`La primitiva de \(0{,}01\,y\) es \(0{,}01\cdot\dfrac{y^2}{2}=0{,}005\,y^2\): \[\int_0^2\left(0{,}1+0{,}02\,x+0{,}01\,y\right)\dd y=\ev{0{,}1\,y+0{,}02\,x\cdot y+0{,}005\,y^2}_0^2\] \[=\left(0{,}1\cdot2+0{,}02\,x\cdot2+0{,}005\cdot2^2\right)-\left(0{,}1\cdot0+0{,}02\,x\cdot0+0{,}005\cdot0^2\right)\] \[=0{,}2+0{,}04\,x+0{,}005\cdot4-0=0{,}2+0{,}04\,x+0{,}02=0{,}22+0{,}04\,x\]`],
+      ['La integral de afuera', R_`La primitiva de \(0{,}04\,x\) es \(0{,}04\cdot\dfrac{x^2}{2}=0{,}02\,x^2\): \[V=\int_0^4\left(0{,}22+0{,}04\,x\right)\dd x=\ev{0{,}22\,x+0{,}02\,x^2}_0^4=\left(0{,}22\cdot4+0{,}02\cdot4^2\right)-\left(0{,}22\cdot0+0{,}02\cdot0^2\right)\] \[=0{,}88+0{,}02\cdot16-0=0{,}88+0{,}32=1{,}2\]`],
+      ['Interpretación', R_`Se depositaron 1,2 cm³ de material: espesor en cm por área en cm² da \(\text{cm}\cdot\text{cm}^2=\text{cm}^3\). Repartido de manera pareja sobre la placa, de área \(4\cdot2=8\) cm², daría un espesor promedio de \[\frac{V}{A}=\frac{1{,}2}{8}=0{,}15\text{ cm}\] que es justo el espesor en el centro de la placa: \(e(2;1)=0{,}1+0{,}02\cdot2+0{,}01\cdot1=0{,}1+0{,}04+0{,}01=0{,}15\). Coincide porque el espesor es lineal; con otro tipo de función, en general no pasa.`]
+    ], R_`\(V=1{,}2\) cm³, con un espesor promedio de 0,15 cm.`);
+  $('prac-volumen').innerHTML = PRAC_VOL.map(ejHTML).join('');
+  EXP.volumen = crearColumnas('ex-volumen');
+  renderMath($('tab-volumen'));
+}
+
+/* ================= navegación ================= */
+const EXP = {}; const init = {};
+const INITS = { recintos:initRecintos, dobles:initDobles, volumen:initVolumen, resumen:() => {} };
+const TODOS = () => [...PRAC_REC, ...PRAC_DOB, ...PRAC_VOL];
+function actualizarProgreso(){ const ids = TODOS().map(e => e.id); const n = ids.filter(i => E.ejercicios[i] && E.ejercicios[i].ok).length, t = ids.length; $('prog-txt').textContent = `${n} de ${t} ejercicios`; $('prog-bar').style.width = (100*n/t)+'%'; }
+function irA(id){
+  if(!INITS[id]) return;
+  $$('.tab-content').forEach(s => s.classList.toggle('active', s.id === 'tab-'+id));
+  $$('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  if(!init[id]){ init[id] = true; INITS[id](); } else if(EXP[id]) EXP[id].redibujar();
+  const m = document.querySelector('main'); if(m && m.scrollIntoView) m.scrollIntoView({block:'start'});
+}
+$$('.tab-btn').forEach(b => b.addEventListener('click', () => irA(b.dataset.tab)));
+let _rst = null;
+function arrancar(){
+  cargar(); renderMath(document.body); init.recintos = true; initRecintos(); actualizarProgreso();
+  $('btn-reiniciar').addEventListener('click', ev => { const b = ev.currentTarget;
+    if(!_rst){ b.textContent = 'Tocá de nuevo para borrar todo'; b.classList.add('alerta'); _rst = setTimeout(() => { _rst = null; b.textContent = 'Borrar mi progreso'; b.classList.remove('alerta'); }, 4000); return; }
+    clearTimeout(_rst); _rst = null; try{ localStorage.removeItem(CLAVE); }catch(e){} E = { ejercicios:{} };
+    b.textContent = 'Borrar mi progreso'; b.classList.remove('alerta');
+    ['recintos','dobles','volumen'].forEach(k => { if(init[k]) INITS[k](); }); actualizarProgreso(); });
+  const h = location.hash.slice(1); if(INITS[h] && h !== 'recintos') irA(h);
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar); else arrancar();
+let _tr = null; window.addEventListener('resize', () => { clearTimeout(_tr); _tr = setTimeout(() => { Object.values(EXP).forEach(x => x.redibujar()); }, 150); });
+
+/* ================= autotest ================= */
+window.__autotest = function(){
+  const r = []; const ok = (n,v,e,tol=1e-9) => r.push({n, v, e, ok: Math.abs(v-e) <= tol});
+  const simple = (g,a,b,n=2000) => { const hh = (b-a)/n; let s = 0; for(let i = 0; i < n; i++) s += g(a+(i+0.5)*hh); return s*hh; };
+  const doble = (f,a,b,lo,hi,n=400) => simple(x => simple(y => f(x,y), lo(x), hi(x), n), a, b, n);
+  const T = 2e-4;
+  /* tema 1: áreas por las dos direcciones */
+  for(const k in REC){ const m = REC[k]; ok('área V '+k, simple(x => m.V.hi(x)-m.V.lo(x), m.V.a, m.V.b), m.area, T); ok('área H '+k, m.H.reduce((s,p) => s + simple(y => p.hi(y)-p.lo(y), p.c, p.d), 0), m.area, 2e-3);
+    for(const p of m.H) for(const y of lin(5, p.c+0.01, p.d-0.01)) ok('franja H dentro '+k, +(p.hi(y) >= p.lo(y)), 1);
+    for(const x of lin(5, m.V.a+0.01, m.V.b-0.01)) ok('franja V dentro '+k, +(m.V.hi(x) >= m.V.lo(x)), 1); }
+  ok('par cortes', (-1)**2 - (-1+2), 0); ok('par cortes 2', 2**2 - (2+2), 0);
+  ok('error mal', simple(x => x*x-x, 0, 1), -1/6, T); ok('error bien', simple(x => x-x*x, 0, 1), 1/6, T);
+  ok('ej2 horizontal', simple(y => Math.sqrt(y)-y, 0, 1), 1/6, 2e-3);
+  const campo = (L,id,j=0) => L.find(e => e.id === id).campos[j].r;
+  ok('p-rec3', campo(PRAC_REC,'p-rec3'), simple(x => 2*x-x*x, 0, 2), T); ok('p-rec3 valor', campo(PRAC_REC,'p-rec3'), 4/3);
+  ok('p-rec4 mismo recinto', simple(y => Math.sqrt(y)-y/2, 0, 4), 4/3, 2e-3);
+  ok('p-rec5', campo(PRAC_REC,'p-rec5'), simple(x => Math.sqrt(x), 0, 4), 2e-3); ok('p-rec5 valor', campo(PRAC_REC,'p-rec5'), 16/3);
+  /* tema 2 */
+  ok('error dobles bien', doble((x,y) => 2*x, 0, 1, x => 0, x => 2), 2, T);
+  ok('ej1 dobles', doble((x,y) => x+2*y, 0, 2, x => 0, x => 1), 4, T);
+  ok('ej1 otro orden', doble((y,x) => x+2*y, 0, 1, y => 0, y => 2), 4, T);
+  ok('ej2 dobles', doble((x,y) => x*y, 0, 1, x => x*x, x => x), 1/24, T);
+  ok('ej3 dobles', doble((y,x) => x*y, 0, 1, y => y, y => Math.sqrt(y)), 1/24, 1e-3);
+  for(const k in ITG){ const m = ITG[k]; ok('I '+k, doble(m.f, m.a, m.b, m.lo, m.hi), m.I, T);
+    for(const x of lin(6, m.a, m.b)){ const c = calcTajada(m, x); ok('G '+k, c.g, m.G(x), 1e-9); ok('tajada '+k, c.g, simple(y => m.f(x,y), m.lo(x), m.hi(x)), T);
+      const y = (m.lo(x)+m.hi(x))/2 + 0.1; ok('primitiva '+k, (m.F(x,y+1e-5)-m.F(x,y-1e-5))/2e-5, m.f(x,y), 1e-6); }
+    ok('afuera '+k, simple(m.G, m.a, m.b), m.I, T); }
+  ok('p-dob1', campo(PRAC_DOB,'p-dob1'), doble((x,y) => 2*x+y, 0, 3, x => 0, x => 2), 1e-3);
+  ok('p-dob2', campo(PRAC_DOB,'p-dob2'), doble((x,y) => x+y, 0, 1, x => 0, x => x), T);
+  ok('p-dob3', campo(PRAC_DOB,'p-dob3'), doble((x,y) => y, -2, 2, x => x*x, x => 4), 1e-3);
+  ok('p-dob5 orden', doble((y,x) => x+3*y*y, 0, 1, y => y, y => 1), doble((x,y) => x+3*y*y, 0, 1, x => 0, x => x), T);
+  /* tema 3 */
+  ok('error vol I', doble((x,y) => x, -1, 1, x => 0, x => 1), 0, T); ok('error vol V', doble((x,y) => Math.abs(x), -1, 1, x => 0, x => 1, 800), 1, T);
+  ok('ej1 vol', doble((x,y) => 4-x*x-y*y, 0, 1, x => 0, x => 1), 10/3, T);
+  ok('ej2 vol', doble((x,y) => x+y, 0, 1, x => x*x, x => x), 3/20, T);
+  ok('ej3 área', doble((x,y) => 1, -1, 2, x => x*x, x => x+2), 9/2, T);
+  ok('ej4 recubrimiento', doble((x,y) => 0.1+0.02*x+0.01*y, 0, 4, x => 0, x => 2), 1.2, T); ok('ej4 centro', 0.1+0.02*2+0.01*1, 0.15, 1e-12);
+  for(const k in SOL){ const m = SOL[k]; ok('V '+k, doble(m.f, m.a, m.b, x => m.c, x => m.d), m.V, T);
+    for(const n of NCOL){ const c = calcColumnas(m, n); ok('suma razonable '+k+n, +(Math.abs(c.suma-m.V) <= Math.abs(calcColumnas(m,1).suma-m.V)+1e-9), 1); }
+    ok('converge '+k, calcColumnas(m, 20).suma, m.V, 2e-3);
+    let mn = Infinity; for(const u of lin(21, m.a, m.b)) for(const v of lin(21, m.c, m.d)) mn = Math.min(mn, m.f(u,v)); ok('techo ≥ 0 '+k, +(mn >= 0), 1); }
+  ok('plano exacto n=1', calcColumnas(SOL.plano, 1).suma, 8, 1e-9); ok('uno exacto n=1', calcColumnas(SOL.uno, 1).suma, 2, 1e-9);
+  ok('p-vol1', campo(PRAC_VOL,'p-vol1'), doble((x,y) => 5-x-y, 0, 2, x => 0, x => 1), T);
+  ok('p-vol2', campo(PRAC_VOL,'p-vol2'), doble((x,y) => 1, -2, 2, x => x*x, x => 4), 1e-3);
+  ok('p-vol3', campo(PRAC_VOL,'p-vol3'), doble((x,y) => 3*y, -1, 1, x => x*x, x => 1), 1e-3);
+  ok('p-vol4', +PRAC_VOL.find(e => e.id === 'p-vol4').opciones[PRAC_VOL.find(e => e.id === 'p-vol4').correcta], doble((x,y) => Math.abs(y), 0, 2, x => -1, x => 1, 800), T);
+  const v5 = PRAC_VOL.find(e => e.id === 'p-vol5'); ok('p-vol5', +v5.opciones[v5.correcta], doble((x,y) => 1, 0, 3, x => 0, x => 2), T);
+  ok('leerNum', leerNum('4/3'), 4/3); ok('leerNum mixto', +isNaN(leerNum('1 1/3')), 1); ok('leerNum coma', leerNum('−2,5'), -2.5);
+  return r;
+};
+</script>
+</body>
+</html>
